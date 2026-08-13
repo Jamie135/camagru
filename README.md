@@ -1,15 +1,11 @@
 # Camagru
 
-A small photo-booth web application, built for the 42 school curriculum.
+A small photo-booth web application, built for the 42Paris school.
 
 Users sign up, confirm their account by email, take a picture with their webcam
-(or upload one), superimpose a selection of overlay images on it, and publish the
+(or upload one), overlay a selection of images on it, and publish the
 result to a public gallery where anyone can browse it and registered users can
 like and comment on it.
-
-The subject constrains the stack deliberately: **no frameworks, no ORMs, no
-front-end libraries** — plain PHP, plain SQL, plain JavaScript. The image
-composition is done server-side with GD, not in the browser canvas.
 
 ## Stack
 
@@ -19,20 +15,6 @@ composition is done server-side with GD, not in the browser canvas.
 | `php`      | PHP 8.3-FPM with `pdo_pgsql` and `gd` (JPEG support compiled in)  |
 | `db`       | PostgreSQL 16; SQL files in `db/init/` run once on first boot     |
 | `mailpit`  | Catches all outgoing mail so account confirmations and password resets can be read locally |
-
-## Layout
-
-```
-app/          PHP application code (not web-exposed)
-public/       Document root — the only directory nginx serves
-data/uploads/ Generated images; bind-mounted, gitignored
-db/init/      Schema + seed SQL, applied on first database boot
-docker/php/   PHP-FPM image definition
-nginx/        Site config
-```
-
-`data/uploads/` is mounted read-write into PHP and read-only into nginx, so PHP
-writes the composed images and nginx serves them directly without touching PHP.
 
 ## Getting started
 
