@@ -2,14 +2,17 @@
 
 /**
  * This is the entry point of the application.
- * 
  * It initializes the application and handles incoming requests.
  */
 
-require_once __DIR__ . "/../core/autoload.php";
-use app\core\Application;
+require_once __DIR__ . "/../app/core/autoload.php";
 
-$app = new Application(dirname(__DIR__));
+use app\core\Application;
+use app\core\ErrorHandler;
+
+ErrorHandler::register();
+
+$app = new Application(ROOT_DIR);
 
 $app->router->get("/", 'home');
 

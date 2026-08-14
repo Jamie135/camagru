@@ -1,9 +1,8 @@
 <?php
 
 /**
- *
- * 
- * 
+ * This class represents the HTTP response.
+ * It provides methods to manipulate the response sent to the client.
  */
 
 namespace app\core;

@@ -2,7 +2,6 @@
 
 /**
  * This is where the routing of the application is handled.
- * 
  * It maps incoming requests to the appropriate callback functions or views based on the request method and path.
  */
 
@@ -62,14 +61,14 @@ class Router
     protected function layoutContent()
     {
         ob_start();
-        include_once Application::$ROOT_DIR . '/views/layouts/main.php';
+        include Application::$ROOT_DIR . '/views/layouts/main.php';
         return ob_get_clean();
     }
 
     protected function viewContent($view)
     {
         ob_start();
-        include_once Application::$ROOT_DIR . '/views/' . $view . '.php';
+        include Application::$ROOT_DIR . '/views/' . $view . '.php';
         return ob_get_clean();
     }
 }

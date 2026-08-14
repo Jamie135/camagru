@@ -2,7 +2,6 @@
 
 /**
  * This class represents the HTTP request.
- * 
  * It provides methods to access information about the incoming request.
  */
 

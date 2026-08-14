@@ -2,7 +2,6 @@
 
 /**
  * This class initializes the components of the application,
- * 
  * including the router, request, and response handling.
  */
 

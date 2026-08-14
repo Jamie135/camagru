@@ -2,9 +2,12 @@
 
 /**
  * Class autoloader for the "app\" namespace, PSR-4 style.
+ * app\core\Router -> <project root>/app/core/Router.php
  *
- * app\core\Router -> <project root>/core/Router.php
+ * Also defines ROOT_DIR, the single source of truth for the project root.
  */
+
+define('ROOT_DIR', dirname(__DIR__, 2));
 
 spl_autoload_register(static function (string $class): void {
     $prefix = 'app\\';
