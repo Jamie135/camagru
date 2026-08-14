@@ -89,15 +89,10 @@ class ErrorHandler
     private static function page(): string
     {
         try {
-            ob_start();
-            include ROOT_DIR . '/views/errors/500.php';
-            $content = ob_get_clean();
+            $view = new View();
+            $view->title = 'Something went wrong';
 
-            ob_start();
-            include ROOT_DIR . '/views/layouts/main.php';
-            $layout = ob_get_clean();
-
-            return str_replace('{{content}}', $content, $layout);
+            return $view->render('errors/500');
         } catch (Throwable) {
             while (ob_get_level() > 0) {
                 ob_end_clean();

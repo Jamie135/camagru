@@ -11,14 +11,16 @@ class Router
 {
     public Request $request;
     public Response $response;
+    public View $view;
     protected array $routes = [
 
     ];
 
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request, Response $response, View $view)
     {
         $this->request = $request;
         $this->response = $response;
+        $this->view = $view;
     }
 
     public function get($path, $callback)
@@ -37,38 +39,15 @@ class Router
 
         if ($callback === false) {
             $this->response->setStatusCode(404);
-            return $this->renderContent("Not Found");
+            $this->view->title = 'Page not found';
+
+            return $this->view->render('errors/404');
         }
+
         if (is_string($callback)) {
-            return $this->renderView($callback);
+            return $this->view->render($callback);
         }
 
         return call_user_func($callback);
-    }
-
-    public function renderView($view)
-    {
-        $layoutContent = $this->layoutContent();
-        $viewContent = $this->viewContent($view);
-        return str_replace('{{content}}', $viewContent, $layoutContent);
-    }
-
-    public function renderContent($viewContent)
-    {
-        $layoutContent = $this->layoutContent();
-        return str_replace('{{content}}', $viewContent, $layoutContent);
-    }
-    protected function layoutContent()
-    {
-        ob_start();
-        include Application::$ROOT_DIR . '/views/layouts/main.php';
-        return ob_get_clean();
-    }
-
-    protected function viewContent($view)
-    {
-        ob_start();
-        include Application::$ROOT_DIR . '/views/' . $view . '.php';
-        return ob_get_clean();
     }
 }
