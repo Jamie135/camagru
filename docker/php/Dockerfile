@@ -6,4 +6,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install pdo_pgsql gd \
     && rm -rf /var/lib/apt/lists/*
 
+COPY php.ini /usr/local/etc/php/php.ini
+
 WORKDIR /var/www
