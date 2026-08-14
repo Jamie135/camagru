@@ -27,6 +27,10 @@
         </div>
     </nav>
     <div class="container">
+        <?php foreach ($this->flashes as $type => $message): ?>
+            <div class="alert alert-<?= $this->e($type) ?>"><?= $this->e($message) ?></div>
+        <?php endforeach; ?>
+
         <?= $content ?>
     </div>
 </body>

@@ -27,4 +27,15 @@ class Request
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
+
+    public function isPost(): bool
+    {
+        return $this->getMethod() === 'post';
+    }
+
+    // Returns the value of a POST parameter, or a default value if it doesn't exist.
+    public function post(string $key, mixed $default = null): mixed
+    {
+        return $_POST[$key] ?? $default;
+    }
 }

@@ -10,6 +10,15 @@ class View
 {
     public string $title = 'Camagru';
 
+    public array $flashes = [];
+
+    public string $csrfToken = '';
+
+    public function csrfField(): string
+    {
+        return '<input type="hidden" name="' . Csrf::FIELD . '" value="' . $this->e($this->csrfToken) . '">';
+    }
+
     public function render(string $view, array $params = []): string
     {
         $content = $this->capture(ROOT_DIR . '/views/' . $view . '.php', $params);
