@@ -41,6 +41,8 @@ docker compose stop               # stop, keep containers and data
 docker compose down               # remove containers, keep the db volume
 docker compose down -v            # remove containers AND wipe the database
 docker compose restart php        # pick up a php.ini / extension change
+docker image prune -a             # remove image not used by running container
+docker system prune -a --volumes  # bulk cleanup
 ```
 
 Application code is bind-mounted, so edits to `app/` and `public/` take effect on
