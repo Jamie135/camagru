@@ -2,9 +2,6 @@
 
 /**
  * Renders a template inside the layout.
- *
- * The template runs first and the layout second, so a page can set $this->title
- * before <head> is written.
  */
 
 namespace app\core;
