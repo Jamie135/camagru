@@ -7,15 +7,16 @@
 
 require_once __DIR__ . "/../app/core/autoload.php";
 
+use app\controllers\SiteController;
 use app\core\Application;
 use app\core\ErrorHandler;
 
 ErrorHandler::register();
 
-$app = new Application(ROOT_DIR);
+$app = new Application();
 
-$app->router->get("/", 'home');
+$app->router->get("/", [SiteController::class, 'home']);
 
-$app->router->get("/contact", "contact");
+$app->router->get("/contact", [SiteController::class, 'contact']);
 
 $app->run();

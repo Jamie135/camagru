@@ -27,27 +27,71 @@ class Router
     {
         $this->routes['get'][$path] = $callback;
     }
+
     public function post($path, $callback)
     {
         $this->routes['post'][$path] = $callback;
     }
+
+    // Resolves the incoming request to the appropriate callback based on the request method and path.
     public function resolve()
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
-        $callback = $this->routes[$method][$path] ?? false;
+        $routes = $this->routes[$method] ?? [];
 
-        if ($callback === false) {
+        $callback = null;
+        $params = [];
+
+        if (isset($routes[$path])) {
+            $callback = $routes[$path];
+        } else {
+            foreach ($routes as $route => $routeCallback) {
+                $matched = $this->match($route, $path);
+
+                if ($matched !== null) {
+                    $callback = $routeCallback;
+                    $params = $matched;
+                    break;
+                }
+            }
+        }
+
+        if ($callback === null) {
             $this->response->setStatusCode(404);
             $this->view->title = 'Page not found';
 
             return $this->view->render('errors/404');
         }
 
-        if (is_string($callback)) {
-            return $this->view->render($callback);
+        if (is_array($callback)) {
+            [$class, $action] = $callback;
+            $callback = [new $class($this->request, $this->response, $this->view), $action];
         }
 
-        return call_user_func($callback);
+        return call_user_func_array($callback, $params);
+    }
+
+    // Matches a route pattern against the request path and extracts parameters.
+    protected function match(string $route, string $path): ?array
+    {
+        $routeParts = explode('/', trim($route, '/'));
+        $pathParts = explode('/', trim($path, '/'));
+
+        if (count($routeParts) !== count($pathParts)) {
+            return null;
+        }
+
+        $params = [];
+
+        foreach ($routeParts as $i => $part) {
+            if (str_starts_with($part, '{')) {
+                $params[trim($part, '{}')] = $pathParts[$i];
+            } elseif ($part !== $pathParts[$i]) {
+                return null;
+            }
+        }
+
+        return $params;
     }
 }
