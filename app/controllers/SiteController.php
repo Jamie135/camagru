@@ -10,11 +10,4 @@ class SiteController extends Controller
     {
         return $this->render('site/home');
     }
-
-    public function contact(): string
-    {
-        $this->view->title = 'Contact';
-
-        return $this->render('site/contact');
-    }
 }

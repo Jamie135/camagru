@@ -15,6 +15,7 @@ abstract class Controller
         protected View $view,
         protected Session $session,
         protected Auth $auth,
+        protected Csrf $csrf,
     ) {
     }
 

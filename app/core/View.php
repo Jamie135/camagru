@@ -16,9 +16,21 @@ class View
 
     public ?array $user = null;
 
+    public string $path = '/';
+
     public function csrfField(): string
     {
         return '<input type="hidden" name="' . Csrf::FIELD . '" value="' . $this->e($this->csrfToken) . '">';
+    }
+
+    // The message under one input, when that input has one.
+    public function fieldError(array $errors, string $field): string
+    {
+        if (!isset($errors[$field])) {
+            return '';
+        }
+
+        return '<div class="invalid-feedback d-block">' . $this->e($errors[$field]) . '</div>';
     }
 
     public function render(string $view, array $params = []): string

@@ -14,17 +14,25 @@ class Router
     public View $view;
     public Session $session;
     public Auth $auth;
+    public Csrf $csrf;
     protected array $routes = [
 
     ];
 
-    public function __construct(Request $request, Response $response, View $view, Session $session, Auth $auth)
-    {
+    public function __construct(
+        Request $request,
+        Response $response,
+        View $view,
+        Session $session,
+        Auth $auth,
+        Csrf $csrf
+    ) {
         $this->request = $request;
         $this->response = $response;
         $this->view = $view;
         $this->session = $session;
         $this->auth = $auth;
+        $this->csrf = $csrf;
     }
 
     public function get($path, $callback)
@@ -71,7 +79,14 @@ class Router
         if (is_array($callback)) {
             [$class, $action] = $callback;
             $callback = [
-                new $class($this->request, $this->response, $this->view, $this->session, $this->auth),
+                new $class(
+                    $this->request,
+                    $this->response,
+                    $this->view,
+                    $this->session,
+                    $this->auth,
+                    $this->csrf
+                ),
                 $action,
             ];
         }

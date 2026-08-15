@@ -44,6 +44,16 @@ class AuthMailer
         ]);
     }
 
+    // Sent to the address being moved to, never to the one already on file:
+    // the point is to prove that the new mailbox exists and is reachable.
+    public function sendEmailChange(string $email, string $username, string $token): bool
+    {
+        return $this->deliver($email, 'Confirm your new Camagru address', 'email-change', [
+            'username' => $username,
+            'url' => $this->url('/profile/confirm-email/' . $token),
+        ]);
+    }
+
     public function sendDuplicateSignupNotice(string $email): bool
     {
         return $this->deliver($email, 'You already have a Camagru account', 'duplicate-signup', [

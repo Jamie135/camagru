@@ -28,10 +28,18 @@ class Application
         $this->csrf = new Csrf($this->session);
         $this->auth = new Auth($this->session);
         $this->view = new View();
-        $this->router = new Router($this->request, $this->response, $this->view, $this->session, $this->auth);
+        $this->router = new Router(
+            $this->request,
+            $this->response,
+            $this->view,
+            $this->session,
+            $this->auth,
+            $this->csrf
+        );
         $this->view->flashes = $this->session->takeFlashes();
         $this->view->csrfToken = $this->csrf->token();
         $this->view->user = $this->auth->user();
+        $this->view->path = $this->request->getPath();
     }
 
     public function run()
