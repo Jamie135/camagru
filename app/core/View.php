@@ -14,6 +14,8 @@ class View
 
     public string $csrfToken = '';
 
+    public ?array $user = null;
+
     public function csrfField(): string
     {
         return '<input type="hidden" name="' . Csrf::FIELD . '" value="' . $this->e($this->csrfToken) . '">';
@@ -21,9 +23,16 @@ class View
 
     public function render(string $view, array $params = []): string
     {
-        $content = $this->capture(ROOT_DIR . '/views/' . $view . '.php', $params);
+        return $this->capture(ROOT_DIR . '/views/layouts/main.php', [
+            'content' => $this->renderPartial($view, $params),
+        ]);
+    }
 
-        return $this->capture(ROOT_DIR . '/views/layouts/main.php', ['content' => $content]);
+    // A template on its own, with no layout wrapped around it: email bodies,
+    // which have no navbar and no flash messages to show.
+    public function renderPartial(string $view, array $params = []): string
+    {
+        return $this->capture(ROOT_DIR . '/views/' . $view . '.php', $params);
     }
 
     public function e(?string $value): string

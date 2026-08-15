@@ -14,11 +14,34 @@ abstract class Controller
         protected Response $response,
         protected View $view,
         protected Session $session,
+        protected Auth $auth,
     ) {
     }
 
     protected function render(string $view, array $params = []): string
     {
         return $this->view->render($view, $params);
+    }
+
+    protected function redirect(string $path): string
+    {
+        return $this->response->redirect($path);
+    }
+
+    // Guards for actions that only make sense one side of the login.
+    protected function requireAuth(string $to = '/login'): ?string
+    {
+        if ($this->auth->check()) {
+            return null;
+        }
+
+        $this->session->flash('warning', 'Please sign in to continue.');
+
+        return $this->redirect($to);
+    }
+
+    protected function requireGuest(string $to = '/'): ?string
+    {
+        return $this->auth->guest() ? null : $this->redirect($to);
     }
 }

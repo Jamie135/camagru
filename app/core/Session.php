@@ -54,6 +54,14 @@ class Session
         session_regenerate_id(true);
     }
 
+    // Invalidate the session by clearing all session data and regenerating the session ID.
+    public function invalidate(): void
+    {
+        $_SESSION = [];
+
+        $this->regenerate();
+    }
+
     // Destroy the session completely, including the cookie on the client side.
     public function destroy(): void
     {

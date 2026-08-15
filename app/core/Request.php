@@ -38,4 +38,10 @@ class Request
     {
         return $_POST[$key] ?? $default;
     }
+
+    // The whole POST body, as handed to a Validator.
+    public function body(): array
+    {
+        return $_POST;
+    }
 }

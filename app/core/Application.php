@@ -15,6 +15,7 @@ class Application
     public View $view;
     public Session $session;
     public Csrf $csrf;
+    public Auth $auth;
     public static Application $app;
 
     public function __construct()
@@ -25,10 +26,12 @@ class Application
         $this->response = new Response();
         $this->session = new Session();
         $this->csrf = new Csrf($this->session);
+        $this->auth = new Auth($this->session);
         $this->view = new View();
-        $this->router = new Router($this->request, $this->response, $this->view, $this->session);
+        $this->router = new Router($this->request, $this->response, $this->view, $this->session, $this->auth);
         $this->view->flashes = $this->session->takeFlashes();
         $this->view->csrfToken = $this->csrf->token();
+        $this->view->user = $this->auth->user();
     }
 
     public function run()
