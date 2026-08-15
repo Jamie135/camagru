@@ -14,9 +14,9 @@ use PDOException;
 
 class User
 {
-    public static function findById(int $id): array
+    public static function findById(int $id): ?array
     {
-        return self::fetchOne('SELECT *FROM users WHERE id = :id', ['id' => $id]);
+        return self::fetchOne('SELECT * FROM users WHERE id = :id', ['id' => $id]);
     }
 
     public static function findByEmail(string $email): ?array
