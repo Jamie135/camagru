@@ -54,8 +54,8 @@ class User
             $statement->execute([
                 'username' => $username,
                 'email' => $email,
-                'password_hash' =>password_hash($password, PASSWORD_DEFAULT),
-                'confirmation_token' => self::newToken(),
+                'hash' =>password_hash($password, PASSWORD_DEFAULT),
+                'token' => self::newToken(),
             ]);
         } catch (PDOException $e) {
             if ($e->getCode() === '23505') {
@@ -100,8 +100,8 @@ class User
     private static function duplicateField(string $message): ?string
     {
         return match (true) {
-            str_contains($message, 'user_email_lower_idx') => 'email',
-            str_contains($message, 'user_username_lower_idx') => 'username',
+            str_contains($message, 'users_email_lower_idx') => 'email',
+            str_contains($message, 'users_username_lower_idx') => 'username',
             default => null,
         };
     }
