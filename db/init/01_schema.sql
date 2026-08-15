@@ -16,6 +16,12 @@ CREATE TABLE users (
     reset_token       VARCHAR(64),
     reset_expires_at  TIMESTAMPTZ,
 
+    -- Email change. The address stays here until the link sent to it is
+    -- clicked, so the old one keeps working until the new one is proven.
+    pending_email           VARCHAR(255),
+    email_change_token      VARCHAR(64),
+    email_change_expires_at TIMESTAMPTZ,
+
     notify_on_comment BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
 
@@ -32,6 +38,8 @@ CREATE UNIQUE INDEX users_confirmation_token_idx ON users (confirmation_token)
     WHERE confirmation_token IS NOT NULL;
 CREATE UNIQUE INDEX users_reset_token_idx ON users (reset_token)
     WHERE reset_token IS NOT NULL;
+CREATE UNIQUE INDEX users_email_change_token_idx ON users (email_change_token)
+    WHERE email_change_token IS NOT NULL;
 
 -- ---------------------------------------------------------------------------
 -- photos

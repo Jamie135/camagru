@@ -93,9 +93,14 @@ class Validator
 
         $value = $this->value($field);
 
-        if (mb_strlen($value) < 8 || preg_match('/[a-zA-Z]/', $value) !== 1 || preg_match('/\d/', $value) !== 1) {
+        if (mb_strlen($value) < 8
+            || preg_match('/[a-z]/', $value) !== 1
+            || preg_match('/[A-Z]/', $value) !== 1
+            || preg_match('/\d/', $value) !== 1
+        ) {
             $this->fail($field, sprintf(
-                '%s must be at least 8 characters and contain a letter and a digit.',
+                '%s must be at least 8 characters and contain an uppercase letter, '
+                    . 'a lowercase letter and a digit.',
                 $this->label($field, $label)
             ));
         }

@@ -54,7 +54,7 @@ class User
             $statement->execute([
                 'username' => $username,
                 'email' => $email,
-                'hash' =>password_hash($password, PASSWORD_DEFAULT),
+                'hash' => password_hash($password, PASSWORD_ARGON2ID),
                 'token' => self::newToken(),
             ]);
         } catch (PDOException $e) {
