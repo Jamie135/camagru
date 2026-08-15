@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Reads and writes rows in the users table.
- *
- * Rows come back as plain associative arrays, or null when nothing matches.
- * Every password_hash() and password_verify() call in the project lives here.
+ * This class is a model for the users table. 
+ * It contains methods for creating, reading, updating, and deleting users,
+ * as well as for handling password hashing and verification, email confirmation, and password resets.
  */
 
 namespace app\models;
