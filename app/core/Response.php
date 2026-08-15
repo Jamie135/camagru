@@ -14,4 +14,16 @@ class Response
     {
         http_response_code($code);
     }
+
+    public function redirect(string $path, int $code = 302): string
+    {
+        if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+            $path = '/';
+        }
+
+        $this->setStatusCode($code);
+        header('Location: ' . $path);
+
+        return '';
+    }
 }
