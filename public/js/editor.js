@@ -2,7 +2,13 @@
 
 const stage = document.querySelector('[data-stage]');
 const video = document.querySelector('[data-video]');
-const preview = document.querySelector('[data-overlay-preview]');
+const overlayStack = document.querySelector('[data-overlay-stack]');
+const captureStack = document.querySelector('[data-capture-stack]');
+const stackList = document.querySelector('[data-stack]');
+const stackSummary = document.querySelector('[data-stack-summary]');
+const addOverlay = document.querySelector('[data-add-overlay]');
+const clearOverlays = document.querySelector('[data-clear-overlays]');
+const upload = document.querySelector('[data-upload]');
 const shutter = document.querySelector('[data-shutter]');
 const panel = document.querySelector('[data-panel]');
 const emptyNotice = document.querySelector('[data-panel-empty]');
@@ -13,7 +19,7 @@ const fileInput = document.querySelector('[name="photo"]');
 const useCamera = document.querySelector('[data-use-camera]');
 const captureDialog = document.querySelector('[data-capture-dialog]');
 const capturePreview = document.querySelector('[data-capture-preview]');
-const captureOverlay = document.querySelector('[data-capture-overlay]');
+const maxOverlays = Number(document.querySelector('[data-max-overlays]').dataset.maxOverlays);
 
 const width = Number(stage.dataset.width);
 const height = Number(stage.dataset.height);
@@ -22,10 +28,67 @@ let cameraReady = false;
 let captured = null;
 let chosenFile = null;
 
+// The overlays already added, bottom layer first.
+let stack = [];
+
 const chosen = () => document.querySelector('[name="overlay"]:checked');
 
-const refreshShutter = () => {
-    shutter.disabled = !cameraReady || chosenFile !== null || chosen() === null;
+const asLayer = (radio) => ({
+    key: radio.value,
+    src: radio.dataset.overlaySrc,
+    label: radio.dataset.overlayLabel,
+});
+
+const layers = () => {
+    const radio = chosen();
+
+    return radio === null ? stack : stack.concat([asLayer(radio)]);
+};
+
+const drawLayers = (into, entries) => {
+    into.replaceChildren(...entries.map((entry) => {
+        const layer = document.createElement('img');
+
+        layer.src = entry.src;
+        layer.alt = '';
+
+        return layer;
+    }));
+};
+
+const drawStack = () => {
+    stackList.replaceChildren(...stack.map((entry) => {
+        const item = document.createElement('li');
+        const thumb = document.createElement('img');
+
+        thumb.src = entry.src;
+        thumb.width = 48;
+        thumb.height = 36;
+        thumb.alt = entry.label;
+        thumb.title = entry.label;
+
+        item.append(thumb);
+
+        return item;
+    }));
+};
+
+const refresh = () => {
+    const chosenLayers = layers();
+    const full = stack.length >= maxOverlays;
+
+    drawLayers(overlayStack, chosenLayers);
+    drawStack();
+
+    addOverlay.hidden = chosen() === null || full;
+    clearOverlays.hidden = chosenLayers.length === 0;
+
+    stackSummary.textContent = full
+        ? 'That is as many as one picture can take.'
+        : chosenLayers.length + (chosenLayers.length === 1 ? ' overlay' : ' overlays') + ' on the picture.';
+
+    shutter.disabled = !cameraReady || chosenFile !== null || chosenLayers.length === 0;
+    upload.disabled = chosenLayers.length === 0;
 };
 
 // The video goes, but the stage stays: it is where an uploaded picture gets
@@ -76,7 +139,7 @@ const startCamera = async () => {
         stopCamera(cameraProblem(error));
     }
 
-    refreshShutter();
+    refresh();
 };
 
 const frame = () => {
@@ -131,25 +194,47 @@ const publish = async (body) => {
 };
 
 radios.forEach((radio) => {
-    radio.addEventListener('change', () => {
-        preview.src = radio.dataset.overlaySrc;
-        preview.hidden = false;
+    radio.addEventListener('change', refresh);
+});
 
-        refreshShutter();
-    });
+// Keeps the pending layer and clears the picker, so the next choice is a new
+// layer rather than a replacement — and the same sticker can go on twice.
+addOverlay.addEventListener('click', () => {
+    const radio = chosen();
+
+    if (radio === null || stack.length >= maxOverlays) {
+        return;
+    }
+
+    stack.push(asLayer(radio));
+    radio.checked = false;
+
+    refresh();
+});
+
+clearOverlays.addEventListener('click', () => {
+    const radio = chosen();
+
+    stack = [];
+
+    if (radio !== null) {
+        radio.checked = false;
+    }
+
+    refresh();
 });
 
 // Nothing is sent yet: the frame is frozen and shown back for approval first.
 shutter.addEventListener('click', () => {
-    const radio = chosen();
+    const chosenLayers = layers();
 
-    if (radio === null || !cameraReady) {
+    if (chosenLayers.length === 0 || !cameraReady) {
         return;
     }
 
     captured = frame();
     capturePreview.src = captured;
-    captureOverlay.src = radio.dataset.overlaySrc;
+    drawLayers(captureStack, chosenLayers);
 
     video.pause();
     captureDialog.showModal();
@@ -169,18 +254,18 @@ captureDialog.addEventListener('close', () => {
 });
 
 document.querySelector('[data-use-capture]').addEventListener('click', async () => {
-    const radio = chosen();
+    const chosenLayers = layers();
     const data = captured;
 
     captureDialog.close();
 
-    if (radio === null || data === null) {
+    if (chosenLayers.length === 0 || data === null) {
         return;
     }
 
     const body = new FormData();
 
-    body.append('overlay', radio.value);
+    chosenLayers.forEach((entry) => body.append('overlay[]', entry.key));
     body.append('capture', data);
 
     shutter.disabled = true;
@@ -190,7 +275,7 @@ document.querySelector('[data-use-capture]').addEventListener('click', async () 
     } catch {
         notify('Your picture could not be sent. Check your connection and try again.');
     } finally {
-        refreshShutter();
+        refresh();
     }
 });
 
@@ -208,7 +293,7 @@ const showUpload = (file) => {
 
     useCamera.hidden = !cameraReady;
 
-    refreshShutter();
+    refresh();
 };
 
 const showCamera = () => {
@@ -227,7 +312,7 @@ const showCamera = () => {
         video.play().catch(() => {});
     }
 
-    refreshShutter();
+    refresh();
 };
 
 fileInput.addEventListener('change', () => {
@@ -258,15 +343,15 @@ useCamera.addEventListener('click', () => {
 fileInput.form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const radio = chosen();
+    const chosenLayers = layers();
 
-    if (radio === null || chosenFile === null) {
+    if (chosenLayers.length === 0 || chosenFile === null) {
         return;
     }
 
     const body = new FormData();
 
-    body.append('overlay', radio.value);
+    chosenLayers.forEach((entry) => body.append('overlay[]', entry.key));
     body.append('photo', chosenFile);
 
     const button = event.target.querySelector('button[type="submit"]');
@@ -285,4 +370,7 @@ fileInput.form.addEventListener('submit', async (event) => {
     }
 });
 
+// Paints the initial state, including disabling what has nothing to act on.
+// startCamera() refreshes again once the camera has answered either way.
+refresh();
 startCamera();

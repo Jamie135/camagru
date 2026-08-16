@@ -9,6 +9,8 @@ namespace app\models;
 
 class Overlay
 {
+    public const MAX = 30;
+
     private const ALL = [
         'polaroid' => 'Polaroid frame',
         'film-strip' => 'Film strip',
@@ -40,6 +42,25 @@ class Overlay
     public static function exists(string $key): bool
     {
         return isset(self::ALL[$key]);
+    }
+
+    public static function pick(mixed $submitted): array
+    {
+        $keys = [];
+
+        foreach (is_array($submitted) ? $submitted : [$submitted] as $key) {
+            if (!is_string($key) || !self::exists($key)) {
+                continue;
+            }
+
+            $keys[] = $key;
+
+            if (count($keys) === self::MAX) {
+                break;
+            }
+        }
+
+        return $keys;
     }
 
     public static function label(string $key): ?string

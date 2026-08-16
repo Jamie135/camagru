@@ -22,19 +22,32 @@ class ImageEditor
     private const QUALITY = 85;
     private const TYPES = [IMAGETYPE_JPEG, IMAGETYPE_PNG];
 
-    public function compose(string $bytes, string $overlayKey): string
+    public function compose(string $bytes, array $overlayKeys): string
     {
-        // Checked before the expensive part, so a bad key costs nothing.
-        $overlay = Overlay::path($overlayKey);
+        // Resolved before the expensive part, so a bad key costs nothing.
+        $overlays = [];
 
-        if ($overlay === null || !is_file($overlay)) {
-            throw new UnusableImageException('Choose one of the overlays on the page.');
+        foreach ($overlayKeys as $key) {
+            $path = is_string($key) ? Overlay::path($key) : null;
+
+            if ($path === null || !is_file($path)) {
+                throw new UnusableImageException('Choose one of the overlays on the page.');
+            }
+
+            $overlays[] = $path;
+        }
+
+        if ($overlays === [] || count($overlays) > Overlay::MAX) {
+            throw new UnusableImageException('Choose at least one overlay, and no more than ' . Overlay::MAX . '.');
         }
 
         $source = $this->decode($bytes);
         $canvas = $this->cover($source);
 
-        $this->stamp($canvas, $overlay);
+        // In the order they were added, so the last one lands on top.
+        foreach ($overlays as $path) {
+            $this->stamp($canvas, $path);
+        }
 
         return $this->write($canvas);
     }

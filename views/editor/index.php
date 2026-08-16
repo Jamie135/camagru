@@ -11,7 +11,8 @@
 
             <img alt="The picture you chose" hidden data-upload-preview>
 
-            <img alt="" hidden data-overlay-preview>
+            <?php // Filled by editor.js: one image per overlay, bottom first. ?>
+            <div data-overlay-stack></div>
         </div>
 
         <p class="alert alert-warning mt-3" hidden data-no-camera>
@@ -29,15 +30,16 @@
                 </button>
             </div>
 
-            <fieldset class="mb-4">
+            <fieldset class="mb-4" data-max-overlays="<?= $maxOverlays ?>">
                 <legend class="h6">Choose an overlay</legend>
 
                 <div class="d-flex flex-nowrap gap-2" data-picker>
                     <?php foreach ($overlays as $overlay): ?>
-                        <input type="radio" class="btn-check" name="overlay" required autocomplete="off"
+                        <input type="radio" class="btn-check" name="overlay" autocomplete="off"
                                id="overlay-<?= $this->e($overlay['key']) ?>"
                                value="<?= $this->e($overlay['key']) ?>"
-                               data-overlay-src="<?= $this->e($overlay['url']) ?>">
+                               data-overlay-src="<?= $this->e($overlay['url']) ?>"
+                               data-overlay-label="<?= $this->e($overlay['label']) ?>">
 
                         <label class="btn btn-outline-secondary p-1" for="overlay-<?= $this->e($overlay['key']) ?>">
                             <img src="<?= $this->e($overlay['url']) ?>" width="96" height="72"
@@ -45,6 +47,21 @@
                         </label>
                     <?php endforeach; ?>
                 </div>
+
+                <?php // Both appear only when there is something for them to do. ?>
+                <div class="d-flex align-items-center flex-wrap gap-2 mt-3">
+                    <button type="button" class="btn btn-sm btn-primary" hidden data-add-overlay>
+                        Add overlay
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary" hidden data-clear-overlays>
+                        Remove all
+                    </button>
+
+                    <span class="form-text m-0" role="status" data-stack-summary></span>
+                </div>
+
+                <ol class="list-unstyled d-flex flex-wrap gap-2 mt-2 mb-0" data-stack></ol>
             </fieldset>
 
             <hr class="my-4">
@@ -62,7 +79,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-outline-primary">Upload</button>
+            <button type="submit" class="btn btn-outline-primary" data-upload>Upload</button>
         </form>
     </div>
 
@@ -88,7 +105,7 @@
 
             <div class="ratio ratio-4x3 viewfinder rounded overflow-hidden">
                 <img alt="The picture you just took" data-capture-preview>
-                <img alt="" data-capture-overlay>
+                <div data-capture-stack></div>
             </div>
         </div>
 

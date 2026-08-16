@@ -41,6 +41,7 @@ class EditorController extends Controller
             'photos' => Photo::panel((int) $this->auth->id()),
             'width' => ImageEditor::WIDTH,
             'height' => ImageEditor::HEIGHT,
+            'maxOverlays' => Overlay::MAX,
         ]);
     }
 
@@ -50,15 +51,14 @@ class EditorController extends Controller
             return $redirect;
         }
 
-        $overlay = $this->request->post('overlay');
+        $overlays = Overlay::pick($this->request->post('overlay'));
 
-        // The disabled button is a courtesy to the user; this is the rule.
-        if (!is_string($overlay) || !Overlay::exists($overlay)) {
+        if ($overlays === []) {
             return $this->fail('Choose an overlay before taking a picture.');
         }
 
         try {
-            $filename = (new ImageEditor())->compose($this->bytes(), $overlay);
+            $filename = (new ImageEditor())->compose($this->bytes(), $overlays);
         } catch (UnusableImageException $e) {
             return $this->fail($e->getMessage());
         }
@@ -66,7 +66,6 @@ class EditorController extends Controller
         try {
             $photo = Photo::create((int) $this->auth->id(), $filename);
         } catch (PDOException $e) {
-            // Do not leave an orphan file behind if the row never lands.
             $path = ROOT_DIR . '/data/uploads/' . $filename;
 
             if (is_file($path)) {
@@ -99,7 +98,6 @@ class EditorController extends Controller
             throw new UnusableImageException('That capture was not a valid image.');
         }
 
-        // Strict mode: refuses anything outside the base64 alphabet.
         $bytes = base64_decode(substr($capture, strlen($prefix[0])), true);
 
         if ($bytes === false) {
@@ -118,7 +116,6 @@ class EditorController extends Controller
             throw new UnusableImageException('That image is larger than 8 MB.');
         }
 
-        // A missing tmp directory or an unwritable one is ours to fix, not theirs.
         if ($error === UPLOAD_ERR_NO_TMP_DIR || $error === UPLOAD_ERR_CANT_WRITE) {
             throw new RuntimeException('PHP could not store the upload: error ' . $error . '.');
         }
@@ -127,7 +124,6 @@ class EditorController extends Controller
             throw new UnusableImageException('Take a picture, or choose a file to upload.');
         }
 
-        // Proves tmp_name really is this request's upload, not a path smuggled in.
         if (!is_uploaded_file($file['tmp_name'])) {
             throw new UnusableImageException('That upload could not be read.');
         }
