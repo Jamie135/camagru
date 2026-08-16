@@ -25,17 +25,28 @@ class GalleryController extends Controller
 
         $page = min($pages, max(1, (int) $this->request->query('page', 1)));
 
-        $this->view->title = 'Gallery';
-        $this->view->scripts[] = '/js/gallery.js';
-
         $photos = Photo::paginate(self::PER_PAGE, ($page - 1) * self::PER_PAGE, $this->auth->id());
 
-        return $this->render('gallery/index', [
+        $params = [
             'photos' => $photos,
             'comments' => Comment::forPhotos(array_column($photos, 'id')),
             'page' => $page,
             'pages' => $pages,
-        ]);
+        ];
+
+        // Scrolling on asks for the next page's cards and nothing around them.
+        if ($this->request->wantsJson()) {
+            return $this->json([
+                'html' => $this->view->renderPartial('partials/photo-list', $params),
+                'page' => $page,
+                'pages' => $pages,
+            ]);
+        }
+
+        $this->view->title = 'Gallery';
+        $this->view->scripts[] = '/js/gallery.js';
+
+        return $this->render('gallery/index', $params);
     }
 
     public function show(string $id): string

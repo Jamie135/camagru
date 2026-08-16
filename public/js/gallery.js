@@ -120,3 +120,90 @@ document.addEventListener('submit', (event) => {
     event.preventDefault();
     run(form, match[1]);
 });
+
+// The gallery with page loads: the next page of photos is fetched and
+// added to the end of the gallery when the "More" button is clicked or scrolled into view.
+
+const gallery = document.querySelector('[data-gallery]');
+const more = document.querySelector('[data-more]');
+
+if (gallery !== null && more !== null && Number(gallery.dataset.page) < Number(gallery.dataset.pages)) {
+    const button = more.querySelector('[data-more-button]');
+    const status = more.querySelector('[data-more-status]');
+    const pagination = document.querySelector('[data-pagination]');
+
+    let page = Number(gallery.dataset.page);
+    let loading = false;
+    let ended = false;
+
+    const nextPage = async (wanted) => {
+        const response = await fetch('/?page=' + wanted, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        }).catch(() => null);
+
+        const data = response === null ? null : await response.json().catch(() => null);
+
+        if (data === null || !response.ok) {
+            throw new Error('More photos could not be loaded.');
+        }
+
+        return data;
+    };
+
+    const load = async () => {
+        if (loading || ended) {
+            return;
+        }
+
+        loading = true;
+        button.disabled = true;
+        status.textContent = 'Loading more photos…';
+
+        let advanced = false;
+
+        try {
+            const data = await nextPage(page + 1);
+
+            gallery.insertAdjacentHTML('beforeend', data.html);
+            page = data.page;
+            advanced = true;
+
+            if (page >= data.pages) {
+                ended = true;
+                button.hidden = true;
+                status.textContent = 'That is every photo.';
+            } else {
+                status.textContent = '';
+            }
+        } catch (error) {
+            notify(error.message);
+            status.textContent = 'Those did not load. Try again.';
+
+            if (pagination !== null) {
+                pagination.hidden = false;
+            }
+        } finally {
+            loading = false;
+            button.disabled = false;
+        }
+
+        if (advanced && !ended && more.getBoundingClientRect().top < window.innerHeight) {
+            await load();
+        }
+    };
+
+    // Ahead of the fold, so the next page is usually there before it is needed.
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            load();
+        }
+    }, { rootMargin: '400px' });
+
+    if (pagination !== null) {
+        pagination.hidden = true;
+    }
+
+    more.hidden = false;
+    button.addEventListener('click', load);
+    observer.observe(more);
+}

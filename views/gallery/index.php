@@ -3,20 +3,19 @@
 <?php if ($photos === []): ?>
     <p class="text-body-secondary">Nothing here yet.</p>
 <?php else: ?>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-        <?php foreach ($photos as $photo): ?>
-            <div class="col">
-                <?= $this->renderPartial('partials/photo-card', [
-                    'photo' => $photo,
-                    'thread' => $comments[$photo['id']] ?? [],
-                    'returnTo' => '/?page=' . $page,
-                ]) ?>
-            </div>
-        <?php endforeach; ?>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" data-gallery
+         data-page="<?= $page ?>" data-pages="<?= $pages ?>">
+        <?= $this->renderPartial('partials/photo-list', [
+            'photos' => $photos,
+            'comments' => $comments,
+            'page' => $page,
+        ]) ?>
     </div>
 
+    <?php // The whole of the pagination when scripting is off. gallery.js hides
+          // it and scrolls the pages in instead, and puts it back if that fails. ?>
     <?php if ($pages > 1): ?>
-        <nav aria-label="Gallery pages" class="my-4">
+        <nav aria-label="Gallery pages" class="my-4" data-pagination>
             <ul class="pagination justify-content-center">
                 <li class="page-item <?= $page === 1 ? 'disabled' : '' ?>">
                     <a class="page-link" href="/?page=<?= $page - 1 ?>"
@@ -37,4 +36,12 @@
             </ul>
         </nav>
     <?php endif; ?>
+
+    <div class="my-4 text-center" data-more hidden>
+        <button type="button" class="btn btn-outline-secondary" data-more-button>
+            Load more photos
+        </button>
+
+        <p class="text-body-secondary small mt-3 mb-0" role="status" data-more-status></p>
+    </div>
 <?php endif; ?>
