@@ -23,7 +23,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link <?= $this->path === '/' ? 'active' : '' ?>"
-                           <?= $this->path === '/' ? 'aria-current="page"' : '' ?> href="/">Home</a>
+                           <?= $this->path === '/' ? 'aria-current="page"' : '' ?> href="/">Gallery</a>
                     </li>
                 </ul>
 

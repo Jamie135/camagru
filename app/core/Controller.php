@@ -54,4 +54,18 @@ abstract class Controller
     {
         return $this->auth->guest() ? null : $this->redirect($to);
     }
+
+    // The same answer for a photo that never existed and one the visitor has no
+    // business seeing, so the reply never says which it was.
+    protected function notFound(): string
+    {
+        if ($this->request->wantsJson()) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $this->response->setStatusCode(404);
+        $this->view->title = 'Page not found';
+
+        return $this->render('errors/404');
+    }
 }

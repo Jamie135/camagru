@@ -8,8 +8,8 @@
 require_once __DIR__ . "/../app/core/autoload.php";
 
 use app\controllers\AuthController;
+use app\controllers\GalleryController;
 use app\controllers\ProfileController;
-use app\controllers\SiteController;
 use app\core\Application;
 use app\core\ErrorHandler;
 
@@ -17,7 +17,8 @@ ErrorHandler::register();
 
 $app = new Application();
 
-$app->router->get("/", [SiteController::class, 'home']);
+$app->router->get("/", [GalleryController::class, 'index']);
+$app->router->get("/photos/{id}", [GalleryController::class, 'show']);
 
 $app->router->get("/register", [AuthController::class, 'register']);
 $app->router->post("/register", [AuthController::class, 'register']);

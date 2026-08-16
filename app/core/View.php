@@ -6,6 +6,8 @@
 
 namespace app\core;
 
+use DateTimeImmutable;
+
 class View
 {
     public string $title = 'Camagru';
@@ -50,6 +52,12 @@ class View
     public function e(?string $value): string
     {
         return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    // A timestamp out of the database.
+    public function date(string $timestamp): string
+    {
+        return (new DateTimeImmutable($timestamp))->format('j M Y, H:i');
     }
 
     protected function capture(string $__file, array $__params): string
