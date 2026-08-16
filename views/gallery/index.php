@@ -8,6 +8,7 @@
             <div class="col">
                 <?= $this->renderPartial('partials/photo-card', [
                     'photo' => $photo,
+                    'thread' => $comments[$photo['id']] ?? [],
                     'returnTo' => '/?page=' . $page,
                 ]) ?>
             </div>

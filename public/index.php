@@ -20,6 +20,7 @@ $app = new Application();
 $app->router->get("/", [GalleryController::class, 'index']);
 $app->router->get("/photos/{id}", [GalleryController::class, 'show']);
 $app->router->post("/photos/{id}/like", [GalleryController::class, 'like']);
+$app->router->post("/photos/{id}/comments", [GalleryController::class, 'comment']);
 
 $app->router->get("/register", [AuthController::class, 'register']);
 $app->router->post("/register", [AuthController::class, 'register']);

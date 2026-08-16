@@ -17,8 +17,21 @@
                 'returnTo' => '/photos/' . $photo['id'],
             ]) ?>
 
-            <span class="text-body-secondary"><?= $photo['comments'] ?>
+            <span class="text-body-secondary" data-comment-count><?= $photo['comments'] ?>
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></span>
+        </div>
+
+        <ul class="list-unstyled mt-4" data-thread>
+            <?php foreach ($thread as $comment): ?>
+                <?= $this->renderPartial('partials/comment', ['comment' => $comment]) ?>
+            <?php endforeach; ?>
+        </ul>
+
+        <div class="mb-5">
+            <?= $this->renderPartial('partials/comment-form', [
+                'photo' => $photo,
+                'returnTo' => '/photos/' . $photo['id'],
+            ]) ?>
         </div>
     </div>
 </div>

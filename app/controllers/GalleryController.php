@@ -7,8 +7,12 @@
 namespace app\controllers;
 
 use app\core\Controller;
+use app\core\Validator;
+use app\models\Comment;
 use app\models\Like;
 use app\models\Photo;
+use app\models\User;
+use app\services\CommentMailer;
 
 class GalleryController extends Controller
 {
@@ -23,8 +27,11 @@ class GalleryController extends Controller
 
         $this->view->title = 'Gallery';
 
+        $photos = Photo::paginate(self::PER_PAGE, ($page - 1) * self::PER_PAGE, $this->auth->id());
+
         return $this->render('gallery/index', [
-            'photos' => Photo::paginate(self::PER_PAGE, ($page - 1) * self::PER_PAGE, $this->auth->id()),
+            'photos' => $photos,
+            'comments' => Comment::forPhotos(array_column($photos, 'id')),
             'page' => $page,
             'pages' => $pages,
         ]);
@@ -40,7 +47,10 @@ class GalleryController extends Controller
 
         $this->view->title = 'Photo by ' . $photo['author'];
 
-        return $this->render('gallery/show', ['photo' => $photo]);
+        return $this->render('gallery/show', [
+            'photo' => $photo,
+            'thread' => Comment::forPhoto($photo['id']),
+        ]);
     }
 
     public function like(string $id): string
@@ -62,6 +72,72 @@ class GalleryController extends Controller
             return $this->json(['liked' => $liked, 'likes' => $likes]);
         }
 
+        return $this->back($photo);
+    }
+
+    public function comment(string $id): string
+    {
+        if (($redirect = $this->requireAuth()) !== null) {
+            return $redirect;
+        }
+
+        $photo = Photo::findById((int) $id);
+
+        if ($photo === null) {
+            return $this->notFound();
+        }
+
+        $validator = new Validator($this->request->body());
+        $validator->required('body', 'Comment')->length('body', 1, 1000, 'Comment');
+
+        if ($validator->fails()) {
+            if ($this->request->wantsJson()) {
+                return $this->json(['error' => $validator->error('body')], 422);
+            }
+
+            $this->session->flash('danger', $validator->error('body'));
+
+            return $this->back($photo);
+        }
+
+        $author = $this->auth->user();
+        $comment = Comment::create($photo['id'], (int) $author['id'], $validator->value('body'));
+
+        $this->notifyAuthor($photo, $author, $validator->value('body'));
+
+        if ($this->request->wantsJson()) {
+            return $this->json([
+                'html' => $this->view->renderPartial('partials/comment', ['comment' => $comment]),
+                'comments' => Comment::countFor($photo['id']),
+            ]);
+        }
+
+        return $this->back($photo);
+    }
+
+    private function notifyAuthor(array $photo, array $commenter, string $body): void
+    {
+        if ((int) $photo['author_id'] === (int) $commenter['id']) {
+            return;
+        }
+
+        $author = User::findById((int) $photo['author_id']);
+
+        if ($author === null || !$author['notify_on_comment']) {
+            return;
+        }
+
+        CommentMailer::fromEnv()->sendNewComment(
+            $author['email'],
+            $author['username'],
+            $commenter['username'],
+            (int) $photo['id'],
+            $body
+        );
+    }
+
+    private function back(array $photo): string
+    {
         $returnTo = $this->request->post('return_to');
 
         return $this->redirect(is_string($returnTo) ? $returnTo : '/photos/' . $photo['id']);

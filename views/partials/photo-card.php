@@ -1,6 +1,10 @@
 <?php
 $href = '/photos/' . $photo['id'];
 $returnTo ??= '/';
+$thread ??= [];
+
+// The card shows the tail of the conversation; the rest is on the photo's page.
+$latest = array_slice($thread, -3);
 ?>
 <article class="card h-100" id="photo-<?= $photo['id'] ?>">
     <a href="<?= $href ?>">
@@ -22,8 +26,32 @@ $returnTo ??= '/';
                 'returnTo' => $returnTo . '#photo-' . $photo['id'],
             ]) ?>
 
-            <a href="<?= $href ?>" class="link-body-secondary text-decoration-none"><?= $photo['comments'] ?>
+            <a href="<?= $href ?>" class="link-body-secondary text-decoration-none"
+               data-comment-count><?= $photo['comments'] ?>
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></a>
+        </div>
+
+        <?php if ($latest !== []): ?>
+            <ul class="list-unstyled mt-3 mb-0" data-thread>
+                <?php foreach ($latest as $comment): ?>
+                    <?= $this->renderPartial('partials/comment', ['comment' => $comment]) ?>
+                <?php endforeach; ?>
+            </ul>
+
+            <?php if (count($thread) > count($latest)): ?>
+                <p class="small mb-0 mt-1">
+                    <a href="<?= $href ?>" class="link-body-secondary">See all <?= count($thread) ?> comments</a>
+                </p>
+            <?php endif; ?>
+        <?php else: ?>
+            <ul class="list-unstyled mt-3 mb-0" data-thread></ul>
+        <?php endif; ?>
+
+        <div class="mt-2">
+            <?= $this->renderPartial('partials/comment-form', [
+                'photo' => $photo,
+                'returnTo' => $returnTo . '#photo-' . $photo['id'],
+            ]) ?>
         </div>
     </div>
 </article>
