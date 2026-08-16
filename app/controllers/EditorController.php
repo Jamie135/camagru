@@ -16,6 +16,8 @@ use RuntimeException;
 
 class EditorController extends Controller
 {
+    public const CAPTION_MAX = 200;
+
     public function index(): string
     {
         if (($redirect = $this->requireAuth()) !== null) {
@@ -32,8 +34,6 @@ class EditorController extends Controller
         $this->view->styles[] = '/css/editor.css';
         $this->view->scripts[] = '/js/editor.js';
 
-        // The side panel's delete buttons are the gallery's, and so is the
-        // handling: same partial, same round trip.
         $this->view->scripts[] = '/js/gallery.js';
 
         return $this->render('editor/index', [
@@ -42,6 +42,7 @@ class EditorController extends Controller
             'width' => ImageEditor::WIDTH,
             'height' => ImageEditor::HEIGHT,
             'maxOverlays' => Overlay::MAX,
+            'maxCaption' => self::CAPTION_MAX,
         ]);
     }
 
@@ -58,13 +59,14 @@ class EditorController extends Controller
         }
 
         try {
+            $caption = $this->caption();
             $filename = (new ImageEditor())->compose($this->bytes(), $overlays);
         } catch (UnusableImageException $e) {
             return $this->fail($e->getMessage());
         }
 
         try {
-            $photo = Photo::create((int) $this->auth->id(), $filename);
+            $photo = Photo::create((int) $this->auth->id(), $filename, $caption);
         } catch (PDOException $e) {
             $path = ROOT_DIR . '/data/uploads/' . $filename;
 
@@ -84,6 +86,35 @@ class EditorController extends Controller
         $this->session->flash('success', 'Your picture has been added to the gallery.');
 
         return $this->redirect('/editor');
+    }
+
+    private function caption(): ?string
+    {
+        $submitted = $this->request->post('caption');
+
+        if (!is_string($submitted)) {
+            return null;
+        }
+
+        $caption = preg_replace('/[^\P{C}\n]+/u', '', str_replace("\r\n", "\n", $submitted));
+
+        if ($caption === null) {
+            throw new UnusableImageException('That caption could not be read as text.');
+        }
+
+        $caption = trim(preg_replace('/\n{3,}/', "\n\n", $caption));
+
+        if ($caption === '') {
+            return null;
+        }
+
+        if (mb_strlen($caption) > self::CAPTION_MAX) {
+            throw new UnusableImageException(
+                'Keep the caption to ' . self::CAPTION_MAX . ' characters or fewer.'
+            );
+        }
+
+        return $caption;
     }
 
     private function bytes(): string

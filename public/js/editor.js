@@ -9,6 +9,8 @@ const stackSummary = document.querySelector('[data-stack-summary]');
 const addOverlay = document.querySelector('[data-add-overlay]');
 const clearOverlays = document.querySelector('[data-clear-overlays]');
 const upload = document.querySelector('[data-upload]');
+const caption = document.querySelector('[data-caption]');
+const captureCaption = document.querySelector('[data-capture-caption]');
 const shutter = document.querySelector('[data-shutter]');
 const panel = document.querySelector('[data-panel]');
 const emptyNotice = document.querySelector('[data-panel-empty]');
@@ -190,6 +192,9 @@ const publish = async (body) => {
     panel.insertAdjacentHTML('afterbegin', data.html);
     emptyNotice.classList.add('d-none');
 
+    // Its words went with it; the next picture starts on a blank one.
+    caption.value = '';
+
     return true;
 };
 
@@ -236,6 +241,9 @@ shutter.addEventListener('click', () => {
     capturePreview.src = captured;
     drawLayers(captureStack, chosenLayers);
 
+    captureCaption.textContent = caption.value.trim();
+    captureCaption.hidden = captureCaption.textContent === '';
+
     video.pause();
     captureDialog.showModal();
 });
@@ -266,6 +274,7 @@ document.querySelector('[data-use-capture]').addEventListener('click', async () 
     const body = new FormData();
 
     chosenLayers.forEach((entry) => body.append('overlay[]', entry.key));
+    body.append('caption', caption.value);
     body.append('capture', data);
 
     shutter.disabled = true;
@@ -352,6 +361,7 @@ fileInput.form.addEventListener('submit', async (event) => {
     const body = new FormData();
 
     chosenLayers.forEach((entry) => body.append('overlay[]', entry.key));
+    body.append('caption', caption.value);
     body.append('photo', chosenFile);
 
     const button = event.target.querySelector('button[type="submit"]');

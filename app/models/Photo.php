@@ -15,6 +15,7 @@ class Photo
     private const SELECT =
         'SELECT p.id,
                 p.filename,
+                p.caption,
                 p.created_at,
                 p.user_id  AS author_id,
                 u.username AS author,
@@ -66,13 +67,13 @@ class Photo
         return $statement;
     }
 
-    public static function create(int $userId, string $filename): array
+    public static function create(int $userId, string $filename, ?string $caption): array
     {
         return self::execute(
-            'INSERT INTO photos (user_id, filename)
-                VALUES (:user, :filename)
-            RETURNING id, filename, created_at, user_id AS author_id',
-            ['user' => $userId, 'filename' => $filename]
+            'INSERT INTO photos (user_id, filename, caption)
+                VALUES (:user, :filename, :caption)
+            RETURNING id, filename, caption, created_at, user_id AS author_id',
+            ['user' => $userId, 'filename' => $filename, 'caption' => $caption]
         )->fetch();
     }
 
@@ -80,7 +81,7 @@ class Photo
     public static function panel(int $userId): array
     {
         return self::execute(
-            'SELECT id, filename, created_at, user_id AS author_id
+            'SELECT id, filename, caption, created_at, user_id AS author_id
                 FROM photos
                 WHERE user_id = :user
             ORDER BY created_at DESC, id DESC',

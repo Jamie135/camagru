@@ -49,7 +49,11 @@ CREATE TABLE photos (
 
     filename   VARCHAR(255) NOT NULL UNIQUE,
 
-    created_at TIMESTAMPTZ  NOT NULL DEFAULT now()
+    caption    TEXT,
+
+    created_at TIMESTAMPTZ  NOT NULL DEFAULT now(),
+
+    CONSTRAINT photos_caption_length CHECK (caption IS NULL OR char_length(caption) BETWEEN 1 AND 200)
 );
 
 

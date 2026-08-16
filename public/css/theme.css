@@ -237,6 +237,25 @@ article.card:hover {
     text-transform: uppercase;
 }
 
+/* The picture's own words, set like the title on a gallery placard. */
+.placard-title {
+    font-family: var(--ny-serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+}
+
+/* Cards stand side by side, so a long caption is trimmed to keep the row
+   level. The photo's own page has room for the whole of it. */
+.card .placard-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .card .placard-date {
     font-family: var(--ny-serif);
     font-style: italic;

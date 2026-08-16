@@ -1,22 +1,22 @@
 -- Development seed data for the gallery. Runs once, after 02_seed_users.sql, on a fresh volume.
 
-INSERT INTO photos (user_id, filename, created_at)
-SELECT u.id, v.filename, now() - v.age
+INSERT INTO photos (user_id, filename, caption, created_at)
+SELECT u.id, v.filename, v.caption, now() - v.age
   FROM (VALUES
-      ('seed-01.jpg', 'jamie', interval '12 minutes'),
-      ('seed-02.jpg', 'bob',   interval '55 minutes'),
-      ('seed-03.jpg', 'carol', interval '3 hours'),
-      ('seed-04.jpg', 'jamie', interval '8 hours'),
-      ('seed-05.jpg', 'dave',  interval '1 day'),
-      ('seed-06.jpg', 'jamie', interval '3 days'),
-      ('seed-07.jpg', 'bob',   interval '3 days'),
-      ('seed-08.jpg', 'erin',  interval '5 days'),
-      ('seed-09.jpg', 'jamie', interval '9 days'),
-      ('seed-10.jpg', 'carol', interval '12 days'),
-      ('seed-11.jpg', 'jamie', interval '20 days'),
-      ('seed-12.jpg', 'bob',   interval '26 days'),
-      ('seed-13.jpg', 'dave',  interval '40 days')
-  ) AS v (filename, username, age)
+      ('seed-01.jpg', 'jamie', 'Waiting for the lilies to open.',                      interval '12 minutes'),
+      ('seed-02.jpg', 'bob',   NULL,                                                   interval '55 minutes'),
+      ('seed-03.jpg', 'carol', 'The last of the light on the ridge.',                   interval '3 hours'),
+      ('seed-04.jpg', 'jamie', 'Tried six overlays before this one. The rest are in a folder I will never open again.', interval '8 hours'),
+      ('seed-05.jpg', 'dave',  NULL,                                                   interval '1 day'),
+      ('seed-06.jpg', 'jamie', 'Somewhere between the water and the sky.',              interval '3 days'),
+      ('seed-07.jpg', 'bob',   'My hand slipped and it came out better.',               interval '3 days'),
+      ('seed-08.jpg', 'erin',  'Everything was very still.',                            interval '5 days'),
+      ('seed-09.jpg', 'jamie', NULL,                                                    interval '9 days'),
+      ('seed-10.jpg', 'carol', 'Third attempt. Worth it.',                              interval '12 days'),
+      ('seed-11.jpg', 'jamie', 'I have been coming back to this spot every week since spring, and it has never once looked the same twice, which is either the light or me.', interval '20 days'),
+      ('seed-12.jpg', 'bob',   NULL,                                                    interval '26 days'),
+      ('seed-13.jpg', 'dave',  'The oldest thing in here, and still my favourite.',      interval '40 days')
+  ) AS v (filename, username, caption, age)
   JOIN users u ON u.username = v.username;
 
 INSERT INTO likes (photo_id, user_id)

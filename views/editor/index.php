@@ -1,6 +1,5 @@
 <h1 class="page-title">Take a picture</h1>
 
-<?php // The title sits above the row so the stage and the side panel share a top edge. ?>
 <div class="row g-4 my-1">
     <div class="col-lg-8">
         <h2 class="h5 mb-3">Camera</h2>
@@ -11,7 +10,6 @@
 
             <img alt="The picture you chose" hidden data-upload-preview>
 
-            <?php // Filled by editor.js: one image per overlay, bottom first. ?>
             <div data-overlay-stack></div>
         </div>
 
@@ -48,7 +46,6 @@
                     <?php endforeach; ?>
                 </div>
 
-                <?php // Both appear only when there is something for them to do. ?>
                 <div class="d-flex align-items-center flex-wrap gap-2 mt-3">
                     <button type="button" class="btn btn-sm btn-primary" hidden data-add-overlay>
                         Add overlay
@@ -63,6 +60,20 @@
 
                 <ol class="list-unstyled d-flex flex-wrap gap-2 mt-2 mb-0" data-stack></ol>
             </fieldset>
+
+            <div class="mb-4">
+                <label for="caption" class="form-label">
+                    Caption <span class="fw-normal text-body-secondary">(optional)</span>
+                </label>
+
+                <textarea class="form-control" id="caption" name="caption" rows="2"
+                          maxlength="<?= $maxCaption ?>" data-caption
+                          placeholder="A few words to go with it"></textarea>
+
+                <div class="form-text">
+                    Plain text, up to <?= $maxCaption ?> characters.
+                </div>
+            </div>
 
             <hr class="my-4">
 
@@ -107,6 +118,8 @@
                 <img alt="The picture you just took" data-capture-preview>
                 <div data-capture-stack></div>
             </div>
+
+            <p class="placard-title mt-3 mb-0" hidden data-capture-caption></p>
         </div>
 
         <div class="card-footer bg-body-tertiary d-flex justify-content-end gap-2">

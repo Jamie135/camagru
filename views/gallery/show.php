@@ -7,7 +7,13 @@
                  alt="Photo by <?= $this->e($photo['author']) ?>" width="640" height="480">
         </div>
 
-        <h1 class="h4 mt-4 mb-1">Photo by <?= $this->e($photo['author']) ?></h1>
+        <?php if ($photo['caption'] !== null): ?>
+            <p class="placard-title mt-4 mb-2"><?= nl2br($this->e($photo['caption'])) ?></p>
+        <?php endif; ?>
+
+        <h1 class="<?= $photo['caption'] === null ? 'h4 mt-4' : 'h6 text-body-secondary' ?> mb-1">
+            Photo by <?= $this->e($photo['author']) ?>
+        </h1>
 
         <p class="placard-date text-body-secondary">
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
@@ -23,7 +29,6 @@
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></span>
 
             <span class="ms-auto">
-                <?php // Back to the gallery, not to this page: it is about to 404. ?>
                 <?= $this->renderPartial('partials/delete-button', [
                     'photo' => $photo,
                     'returnTo' => '/',

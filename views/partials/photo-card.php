@@ -2,8 +2,6 @@
 $href = '/photos/' . $photo['id'];
 $returnTo ??= '/';
 $thread ??= [];
-
-// How many of a photo's comments a card shows; gallery.js trims to the same.
 $preview = 3;
 $latest = array_slice($thread, -$preview);
 ?>
@@ -15,6 +13,10 @@ $latest = array_slice($thread, -$preview);
     </a>
 
     <div class="card-body d-flex flex-column">
+        <?php if ($photo['caption'] !== null): ?>
+            <p class="card-text placard-title mb-2"><?= nl2br($this->e($photo['caption'])) ?></p>
+        <?php endif; ?>
+
         <p class="card-text placard-author mb-0"><?= $this->e($photo['author']) ?></p>
 
         <p class="card-text placard-date text-body-secondary mb-3">
@@ -45,7 +47,6 @@ $latest = array_slice($thread, -$preview);
             <?php endforeach; ?>
         </ul>
 
-        <?php // Hidden until the thread outgrows the card, then gallery.js shows it. ?>
         <p class="small mb-0 mt-1<?= count($thread) > $preview ? '' : ' d-none' ?>" data-thread-more>
             <a href="<?= $href ?>" class="link-body-secondary">See all
                 <span data-thread-total><?= count($thread) ?></span> comments</a>
