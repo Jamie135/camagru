@@ -71,7 +71,7 @@ class Photo
         return self::execute(
             'INSERT INTO photos (user_id, filename)
                 VALUES (:user, :filename)
-            RETURNING id, filename, created_at',
+            RETURNING id, filename, created_at, user_id AS author_id',
             ['user' => $userId, 'filename' => $filename]
         )->fetch();
     }
@@ -80,7 +80,7 @@ class Photo
     public static function panel(int $userId): array
     {
         return self::execute(
-            'SELECT id, filename, created_at
+            'SELECT id, filename, created_at, user_id AS author_id
                 FROM photos
                 WHERE user_id = :user
             ORDER BY created_at DESC, id DESC',

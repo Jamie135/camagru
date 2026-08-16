@@ -1,0 +1,12 @@
+/* cover matches ImageEditor::cover(); fill matches its full-bleed stamp. */
+[data-video] { object-fit: cover; }
+
+[data-overlay-preview] { object-fit: fill; pointer-events: none; }
+
+/* The side column scrolls on its own rather than outgrowing the stage. */
+@media (min-width: 992px) {
+    [data-panel] {
+        max-height: 34rem;
+        overflow-y: auto;
+    }
+}

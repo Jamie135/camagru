@@ -16,6 +16,27 @@ use RuntimeException;
 
 class EditorController extends Controller
 {
+    public function index(): string
+    {
+        if (($redirect = $this->requireAuth()) !== null) {
+            return $redirect;
+        }
+
+        $overlays = [];
+
+        foreach (Overlay::all() as $key => $label) {
+            $overlays[] = ['key' => $key, 'label' => $label, 'url' => Overlay::url($key)];
+        }
+
+        $this->view->title = 'Take a picture';
+        $this->view->styles[] = '/css/editor.css';
+
+        return $this->render('editor/index', [
+            'overlays' => $overlays,
+            'photos' => Photo::panel((int) $this->auth->id()),
+        ]);
+    }
+
     public function store(): string
     {
         if (($redirect = $this->requireAuth()) !== null) {
