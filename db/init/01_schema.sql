@@ -1,6 +1,4 @@
--- ---------------------------------------------------------------------------
--- users
--- ---------------------------------------------------------------------------
+-- Creation of users, photos, comments, and likes tables, with constraints and indexes.
 
 CREATE TABLE users (
     id                SERIAL PRIMARY KEY,

@@ -19,7 +19,8 @@ like and comment on it.
 ## Getting started
 
 ```sh
-cp .env.example .env     # then fill in DB_NAME / DB_USER / DB_PASSWORD
+cp .env.example .env                 # then fill in DB_NAME / DB_USER / DB_PASSWORD
+cp assets/photos/*.jpg data/uploads/ # photos the gallery seed rows point at
 docker compose up -d --build
 ```
 
@@ -90,10 +91,16 @@ docker compose exec -T db psql -U "$DB_USER" -d "$DB_NAME" < backup.sql
 ### Uploads
 
 ```sh
-ls -lh data/uploads/                                # what has been generated
+ls -lh data/uploads/                                 # what has been generated
 docker compose exec php ls -ld /var/www/data/uploads # check ownership if writes fail
 find data/uploads -type f ! -name .gitkeep -delete   # clear generated images
+cp assets/photos/*.jpg data/uploads/                 # put the seed photos back
 ```
+
+`data/uploads/` is gitignored, so it is empty on a fresh clone and after the
+clean-up above. The photos the gallery seed rows point at are tracked in
+`assets/photos/` and copied across instead; skip that step and every row from
+`db/init/03_seed_gallery.sql` renders as a broken image.
 
 ## Notes
 
