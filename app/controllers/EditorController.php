@@ -88,6 +88,35 @@ class EditorController extends Controller
         return $this->redirect('/editor');
     }
 
+    /**
+     * Hands one picture back to the person who made it. Reachable only from the
+     * side panel, and only for your own work: the query never returns anyone
+     * else's, so a guessed id is a 404 rather than someone else's picture.
+     */
+    public function download(string $id): string
+    {
+        if (($redirect = $this->requireAuth()) !== null) {
+            return $redirect;
+        }
+
+        $photo = Photo::findOwned((int) $id, (int) $this->auth->id());
+
+        if ($photo === null) {
+            return $this->notFound();
+        }
+
+        // basename() again on the way out: the column is ours, but this is the
+        // one place its value turns back into a path.
+        $path = ROOT_DIR . '/data/uploads/' . basename($photo['filename']);
+
+        if (!is_file($path)) {
+            return $this->notFound();
+        }
+
+        // Built from the row's own id, so nothing typed in reaches the header.
+        return $this->response->file($path, 'camagru-' . (int) $photo['id'] . '.jpg', 'image/jpeg');
+    }
+
     private function caption(): ?string
     {
         $submitted = $this->request->post('caption');

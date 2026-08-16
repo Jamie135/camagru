@@ -44,6 +44,16 @@ class Photo
         )->fetch() ?: null;
     }
 
+    public static function findOwned(int $id, int $userId): ?array
+    {
+        return self::execute(
+            'SELECT id, filename, caption, created_at
+                FROM photos
+               WHERE id = :id AND user_id = :user',
+            ['id' => $id, 'user' => $userId]
+        )->fetch() ?: null;
+    }
+
     public static function count(): int
     {
         return (int) self::execute('SELECT count(*) FROM photos', [])->fetchColumn();

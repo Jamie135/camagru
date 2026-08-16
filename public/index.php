@@ -27,6 +27,8 @@ $app->router->post("/photos/{id}/delete", [GalleryController::class, 'destroy'])
 $app->router->get("/editor", [EditorController::class, 'index']);
 $app->router->post("/editor", [EditorController::class, 'store']);
 
+$app->router->get("/photos/{id}/download", [EditorController::class, 'download']);
+
 $app->router->get("/register", [AuthController::class, 'register']);
 $app->router->post("/register", [AuthController::class, 'register']);
 
@@ -50,7 +52,6 @@ $app->router->post("/profile/password", [ProfileController::class, 'updatePasswo
 $app->router->post("/profile/notifications", [ProfileController::class, 'updateNotifications']);
 $app->router->post("/profile/cancel-email-change", [ProfileController::class, 'cancelEmailChange']);
 
-// No session needed: mail is often opened in a different browser.
 $app->router->get("/profile/confirm-email/{token}", [ProfileController::class, 'confirmEmail']);
 
 $app->run();

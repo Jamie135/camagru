@@ -11,10 +11,17 @@
                 <?= $this->e($this->date($photo['created_at'])) ?>
             </time>
 
-            <?= $this->renderPartial('partials/delete-button', [
-                'photo' => $photo,
-                'returnTo' => '/editor',
-            ]) ?>
+            <span class="d-flex align-items-baseline gap-2">
+                <a class="btn btn-link btn-sm p-0 align-baseline text-decoration-none link-secondary"
+                   href="/photos/<?= $photo['id'] ?>/download">
+                    Save<span class="visually-hidden"> this picture to your computer</span>
+                </a>
+
+                <?= $this->renderPartial('partials/delete-button', [
+                    'photo' => $photo,
+                    'returnTo' => '/editor',
+                ]) ?>
+            </span>
         </div>
     </div>
 </div>

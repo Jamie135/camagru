@@ -27,6 +27,22 @@ class Response
         return '';
     }
 
+    public function file(string $path, string $name, string $type): string
+    {
+        $this->setStatusCode(200);
+
+        header('Content-Type: ' . $type);
+        header('Content-Disposition: attachment; filename="' . $name . '"');
+        header('Content-Length: ' . filesize($path));
+
+        // One person's picture: no shared cache has any business keeping it.
+        header('Cache-Control: private, no-store');
+
+        readfile($path);
+
+        return '';
+    }
+
     public function json(array $data, int $code = 200): string
     {
         $this->setStatusCode($code);
