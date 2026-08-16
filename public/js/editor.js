@@ -28,24 +28,6 @@ const refreshShutter = () => {
     shutter.disabled = !cameraReady || chosenFile !== null || chosen() === null;
 };
 
-const notify = (message) => {
-    const alert = document.createElement('div');
-
-    alert.className = 'alert alert-danger alert-dismissible fade show mt-3';
-    alert.setAttribute('role', 'alert');
-    alert.textContent = message;
-
-    const close = document.createElement('button');
-
-    close.type = 'button';
-    close.className = 'btn-close';
-    close.setAttribute('aria-label', 'Close');
-
-    // layout.js already closes any .alert .btn-close, including this one.
-    alert.append(close);
-    document.querySelector('main').prepend(alert);
-};
-
 // The video goes, but the stage stays: it is where an uploaded picture gets
 // previewed, and someone with no camera is exactly who needs that.
 const stopCamera = (reason) => {

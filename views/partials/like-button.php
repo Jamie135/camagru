@@ -10,9 +10,9 @@
 
         <button type="submit" aria-pressed="<?= $photo['liked'] ? 'true' : 'false' ?>"
                 class="btn btn-link btn-sm p-0 align-baseline text-decoration-none <?= $photo['liked'] ? 'link-danger' : 'link-body-secondary' ?>">
-            <span aria-hidden="true"><?= $photo['liked'] ? '&hearts;' : '&#9825;' ?></span>
+            <span aria-hidden="true" data-like-icon><?= $photo['liked'] ? '&hearts;' : '&#9825;' ?></span>
             <span data-like-count><?= $photo['likes'] ?></span>
-            <span class="visually-hidden"><?= $photo['liked'] ? 'likes. Unlike' : 'likes. Like' ?> this photo</span>
+            <span class="visually-hidden" data-like-label><?= $photo['liked'] ? 'likes. Unlike' : 'likes. Like' ?> this photo</span>
         </button>
     </form>
 <?php endif; ?>

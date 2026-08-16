@@ -26,6 +26,7 @@ class GalleryController extends Controller
         $page = min($pages, max(1, (int) $this->request->query('page', 1)));
 
         $this->view->title = 'Gallery';
+        $this->view->scripts[] = '/js/gallery.js';
 
         $photos = Photo::paginate(self::PER_PAGE, ($page - 1) * self::PER_PAGE, $this->auth->id());
 
@@ -46,6 +47,7 @@ class GalleryController extends Controller
         }
 
         $this->view->title = 'Photo by ' . $photo['author'];
+        $this->view->scripts[] = '/js/gallery.js';
 
         return $this->render('gallery/show', [
             'photo' => $photo,

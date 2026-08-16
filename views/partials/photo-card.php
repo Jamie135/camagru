@@ -3,9 +3,11 @@ $href = '/photos/' . $photo['id'];
 $returnTo ??= '/';
 $thread ??= [];
 
-$latest = array_slice($thread, -3);
+// How many of a photo's comments a card shows; gallery.js trims to the same.
+$preview = 3;
+$latest = array_slice($thread, -$preview);
 ?>
-<article class="card h-100" id="photo-<?= $photo['id'] ?>">
+<article class="card h-100" id="photo-<?= $photo['id'] ?>" data-photo="<?= $photo['id'] ?>">
     <a href="<?= $href ?>" class="photo-mat">
         <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="img-fluid"
              alt="Photo by <?= $this->e($photo['author']) ?>"
@@ -37,21 +39,17 @@ $latest = array_slice($thread, -3);
             </span>
         </div>
 
-        <?php if ($latest !== []): ?>
-            <ul class="list-unstyled mt-3 mb-0" data-thread>
-                <?php foreach ($latest as $comment): ?>
-                    <?= $this->renderPartial('partials/comment', ['comment' => $comment]) ?>
-                <?php endforeach; ?>
-            </ul>
+        <ul class="list-unstyled mt-3 mb-0" data-thread data-thread-max="<?= $preview ?>">
+            <?php foreach ($latest as $comment): ?>
+                <?= $this->renderPartial('partials/comment', ['comment' => $comment]) ?>
+            <?php endforeach; ?>
+        </ul>
 
-            <?php if (count($thread) > count($latest)): ?>
-                <p class="small mb-0 mt-1">
-                    <a href="<?= $href ?>" class="link-body-secondary">See all <?= count($thread) ?> comments</a>
-                </p>
-            <?php endif; ?>
-        <?php else: ?>
-            <ul class="list-unstyled mt-3 mb-0" data-thread></ul>
-        <?php endif; ?>
+        <?php // Hidden until the thread outgrows the card, then gallery.js shows it. ?>
+        <p class="small mb-0 mt-1<?= count($thread) > $preview ? '' : ' d-none' ?>" data-thread-more>
+            <a href="<?= $href ?>" class="link-body-secondary">See all
+                <span data-thread-total><?= count($thread) ?></span> comments</a>
+        </p>
 
         <div class="mt-auto pt-2">
             <?= $this->renderPartial('partials/comment-form', [
