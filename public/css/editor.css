@@ -6,6 +6,28 @@
 [data-overlay-preview],
 [data-capture-overlay] { object-fit: fill; pointer-events: none; }
 
+/* A chequerboard behind each swatch: snow and rain are white on white
+   otherwise, and it says "transparent" the way every image editor does. */
+[data-picker] img {
+    background-color: #6f777d;
+    background-image:
+        linear-gradient(45deg, rgb(255 255 255 / 22%) 25%, transparent 25% 75%, rgb(255 255 255 / 22%) 75%),
+        linear-gradient(45deg, rgb(255 255 255 / 22%) 25%, transparent 25% 75%, rgb(255 255 255 / 22%) 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 6px 6px;
+}
+
+/* One row that scrolls sideways, so the shutter stays put however many
+   overlays there are. Flex items shrink by default; these must not. */
+[data-picker] {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+[data-picker] .btn {
+    flex: 0 0 auto;
+}
+
 /* The side column scrolls on its own rather than outgrowing the stage. */
 @media (min-width: 992px) {
     [data-panel] {

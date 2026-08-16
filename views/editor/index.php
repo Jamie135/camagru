@@ -19,13 +19,18 @@
         </p>
 
         <?php // Radios rather than buttons, so the form still submits with JavaScript off. ?>
-        <form method="post" action="/editor" enctype="multipart/form-data" class="mt-4">
+        <form method="post" action="/editor" enctype="multipart/form-data" class="mt-3">
             <?= $this->csrfField() ?>
+
+            <?php // Inactive until an overlay is chosen, and driven entirely by editor.js. ?>
+            <button type="button" class="btn btn-primary mb-4" disabled data-shutter>
+                Take the picture
+            </button>
 
             <fieldset class="mb-4">
                 <legend class="h6">Choose an overlay</legend>
 
-                <div class="d-flex flex-wrap gap-2">
+                <div class="d-flex flex-nowrap gap-2" data-picker>
                     <?php foreach ($overlays as $overlay): ?>
                         <input type="radio" class="btn-check" name="overlay" required autocomplete="off"
                                id="overlay-<?= $this->e($overlay['key']) ?>"
@@ -39,11 +44,6 @@
                     <?php endforeach; ?>
                 </div>
             </fieldset>
-
-            <?php // Inactive until an overlay is chosen, and driven entirely by editor.js. ?>
-            <button type="button" class="btn btn-primary" disabled data-shutter>
-                Take the picture
-            </button>
 
             <hr class="my-4">
 

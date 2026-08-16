@@ -11,10 +11,25 @@ class Overlay
 {
     private const ALL = [
         'polaroid' => 'Polaroid frame',
+        'film-strip' => 'Film strip',
+        'speech-bubble' => 'Speech bubble',
         'sunglasses' => 'Sunglasses',
+        'mustache' => 'Mustache',
+        'crown' => 'Crown',
+        'party-hat' => 'Party hat',
+        'cat-ears' => 'Cat ears',
         'ufo-beam' => 'UFO beam',
+        'lightning' => 'Lightning',
+        'rainbow' => 'Rainbow',
+        'bunting' => 'Bunting',
         'confetti' => 'Confetti',
+        'stars' => 'Stars',
+        'bubbles' => 'Bubbles',
+        'snow' => 'Snow',
+        'rain' => 'Rain',
         'scanlines' => 'Scanlines',
+        'spotlight' => 'Spotlight',
+        'heart-mask' => 'Heart',
     ];
 
     public static function all(): array
