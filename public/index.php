@@ -28,7 +28,6 @@ $app->router->get("/verify/{token}", [AuthController::class, 'verify']);
 $app->router->get("/login", [AuthController::class, 'login']);
 $app->router->post("/login", [AuthController::class, 'login']);
 
-// POST only: a link would let any page log our visitors out by embedding it.
 $app->router->post("/logout", [AuthController::class, 'logout']);
 
 $app->router->get("/forgot-password", [AuthController::class, 'forgotPassword']);
