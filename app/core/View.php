@@ -20,6 +20,10 @@ class View
 
     public string $path = '/';
 
+    public array $styles = [];
+
+    public array $scripts = [];
+
     public function csrfField(): string
     {
         return '<input type="hidden" name="' . Csrf::FIELD . '" value="' . $this->e($this->csrfToken) . '">';

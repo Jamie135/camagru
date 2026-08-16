@@ -7,6 +7,10 @@
     <title><?= $this->e($this->title) ?></title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <?php foreach ($this->styles as $href): ?>
+        <link rel="stylesheet" href="<?= $this->e($href) ?>">
+    <?php endforeach; ?>
 </head>
 
 <?php // Column layout so the footer is pushed down on pages too short to fill the screen. ?>
@@ -84,5 +88,9 @@
     </footer>
 
     <script src="/js/layout.js"></script>
+
+    <?php foreach ($this->scripts as $src): ?>
+        <script src="<?= $this->e($src) ?>" defer></script>
+    <?php endforeach; ?>
 </body>
 </html>

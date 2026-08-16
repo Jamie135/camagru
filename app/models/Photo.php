@@ -65,4 +65,26 @@ class Photo
 
         return $statement;
     }
+
+    public static function create(int $userId, string $filename): array
+    {
+        return self::execute(
+            'INSERT INTO photos (user_id, filename)
+                VALUES (:user, :filename)
+            RETURNING id, filename, created_at',
+            ['user' => $userId, 'filename' => $filename]
+        )->fetch();
+    }
+
+    // The editor's side panel: the signed-in user's own work, newest first.
+    public static function panel(int $userId): array
+    {
+        return self::execute(
+            'SELECT id, filename, created_at
+                FROM photos
+                WHERE user_id = :user
+            ORDER BY created_at DESC, id DESC',
+            ['user' => $userId]
+        )->fetchAll();
+    }
 }

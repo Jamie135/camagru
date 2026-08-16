@@ -169,7 +169,6 @@ function save(GdImage $image, string $name): void
 
         imagealphablending($small, false);
         imagecopyresampled($small, $image, 0, 0, 0, 0, WIDTH, HEIGHT, imagesx($image), imagesy($image));
-        imagedestroy($image);
 
         $image = $small;
     }
@@ -196,8 +195,6 @@ function save(GdImage $image, string $name): void
             $highest = max($highest, $alpha);
         }
     }
-
-    imagedestroy($image);
 
     printf(
         "%-11s %dx%d   alpha %d-%d   %5.1f KB\n",

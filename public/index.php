@@ -10,6 +10,7 @@ require_once __DIR__ . "/../app/core/autoload.php";
 use app\controllers\AuthController;
 use app\controllers\GalleryController;
 use app\controllers\ProfileController;
+use app\controllers\EditorController;
 use app\core\Application;
 use app\core\ErrorHandler;
 
@@ -22,6 +23,9 @@ $app->router->get("/photos/{id}", [GalleryController::class, 'show']);
 $app->router->post("/photos/{id}/like", [GalleryController::class, 'like']);
 $app->router->post("/photos/{id}/comments", [GalleryController::class, 'comment']);
 $app->router->post("/photos/{id}/delete", [GalleryController::class, 'destroy']);
+
+$app->router->get("/editor", [EditorController::class, 'index']);
+$app->router->post("/editor", [EditorController::class, 'store']);
 
 $app->router->get("/register", [AuthController::class, 'register']);
 $app->router->post("/register", [AuthController::class, 'register']);
