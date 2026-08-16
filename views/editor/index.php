@@ -21,9 +21,13 @@
         <form method="post" action="/editor" enctype="multipart/form-data" class="mt-3">
             <?= $this->csrfField() ?>
 
-            <button type="button" class="btn btn-primary mb-4" disabled data-shutter>
-                Take the picture
-            </button>
+            <div class="text-center mb-4">
+                <button type="button" class="btn btn-primary shutter-button" disabled data-shutter aria-label="Take the picture">
+                    <svg class="camera-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M9 3.5h6l1.5 2h3A2.5 2.5 0 0 1 22 8v8.5A2.5 2.5 0 0 1 19.5 19h-15A2.5 2.5 0 0 1 2 16.5V8a2.5 2.5 0 0 1 2.5-2h3L9 3.5zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
 
             <fieldset class="mb-4">
                 <legend class="h6">Choose an overlay</legend>

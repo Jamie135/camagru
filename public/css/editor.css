@@ -32,6 +32,29 @@
     padding: 0.35rem 0 0.75rem;
 }
 
+.shutter-button {
+    width: 4.25rem;
+    height: 4.25rem;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 20px -12px rgb(22 41 60 / 55%);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.shutter-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 24px -14px rgb(22 41 60 / 60%);
+}
+
+.shutter-button .camera-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    display: block;
+}
+
 [data-picker] .btn {
     flex: 0 0 auto;
     transition: transform 180ms ease, box-shadow 180ms ease;
