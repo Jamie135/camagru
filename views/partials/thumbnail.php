@@ -1,4 +1,4 @@
-<div class="col" id="thumbnail-<?= $photo['id'] ?>">
+<div class="col" id="thumbnail-<?= $photo['id'] ?>" data-photo="<?= $photo['id'] ?>">
     <div class="card h-100">
         <a href="/photos/<?= $photo['id'] ?>">
             <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="card-img-top img-fluid"

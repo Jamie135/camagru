@@ -17,7 +17,6 @@ const send = async (form) => {
     return data;
 };
 
-// The card a form belongs to, or the page itself on a photo of its own.
 const scopeOf = (form) => form.closest('[data-photo]') ?? document;
 
 const like = async (form) => {
@@ -42,7 +41,6 @@ const comment = async (form) => {
 
     thread.insertAdjacentHTML('beforeend', data.html);
 
-    // A card keeps the last few comments, so the oldest drops off the top.
     while (max > 0 && thread.children.length > max) {
         thread.firstElementChild.remove();
     }
@@ -61,26 +59,33 @@ const comment = async (form) => {
 };
 
 const destroy = async (form) => {
-    // The answer layout.js collected covers this send and no other.
     delete form.dataset.confirmed;
 
     await send(form);
 
     const card = form.closest('[data-photo]');
 
-    // A photo's own page is a 404 from here on, so follow the form off it.
     if (card === null) {
         window.location.assign(form.elements.return_to.value);
 
         return;
     }
 
+    const shelf = card.closest('[data-gallery], [data-panel]');
+
     (card.closest('.col') ?? card).remove();
 
-    // What is left may be an empty page, or one past the last page there is.
-    if (document.querySelector('[data-photo]') === null) {
-        window.location.reload();
+    if (shelf === null || shelf.querySelector('[data-photo]') !== null) {
+        return;
     }
+
+    if (shelf.matches('[data-gallery]')) {
+        window.location.reload();
+
+        return;
+    }
+
+    document.querySelector('[data-panel-empty]').classList.remove('d-none');
 };
 
 const handlers = [
@@ -106,7 +111,6 @@ const run = async (form, handler) => {
 document.addEventListener('submit', (event) => {
     const form = event.target;
 
-    // layout.js stops the first pass of a delete to ask whether we mean it.
     if (event.defaultPrevented) {
         return;
     }

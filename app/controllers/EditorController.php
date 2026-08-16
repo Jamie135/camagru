@@ -32,6 +32,10 @@ class EditorController extends Controller
         $this->view->styles[] = '/css/editor.css';
         $this->view->scripts[] = '/js/editor.js';
 
+        // The side panel's delete buttons are the gallery's, and so is the
+        // handling: same partial, same round trip.
+        $this->view->scripts[] = '/js/gallery.js';
+
         return $this->render('editor/index', [
             'overlays' => $overlays,
             'photos' => Photo::panel((int) $this->auth->id()),

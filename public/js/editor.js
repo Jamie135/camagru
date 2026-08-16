@@ -69,8 +69,9 @@ const startCamera = async () => {
             audio: false,
         });
 
-        await video.play();
         cameraReady = true;
+
+        video.play().catch(() => {});
     } catch (error) {
         stopCamera(cameraProblem(error));
     }
@@ -120,11 +121,13 @@ const publish = async (body) => {
     if (!response.ok) {
         notify(data.error ?? 'Your picture could not be saved.');
 
-        return;
+        return false;
     }
 
     panel.insertAdjacentHTML('afterbegin', data.html);
     emptyNotice.classList.add('d-none');
+
+    return true;
 };
 
 radios.forEach((radio) => {
@@ -250,6 +253,36 @@ fileInput.addEventListener('change', () => {
 useCamera.addEventListener('click', () => {
     fileInput.value = '';
     showCamera();
+});
+
+fileInput.form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const radio = chosen();
+
+    if (radio === null || chosenFile === null) {
+        return;
+    }
+
+    const body = new FormData();
+
+    body.append('overlay', radio.value);
+    body.append('photo', chosenFile);
+
+    const button = event.target.querySelector('button[type="submit"]');
+
+    button.disabled = true;
+
+    try {
+        if (await publish(body)) {
+            fileInput.value = '';
+            showCamera();
+        }
+    } catch {
+        notify('Your picture could not be sent. Check your connection and try again.');
+    } finally {
+        button.disabled = false;
+    }
 });
 
 startCamera();
