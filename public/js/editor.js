@@ -48,16 +48,35 @@ const notify = (message) => {
 
 // The video goes, but the stage stays: it is where an uploaded picture gets
 // previewed, and someone with no camera is exactly who needs that.
-const stopCamera = () => {
+const stopCamera = (reason) => {
     video.hidden = true;
     shutter.hidden = true;
+    noCamera.textContent = reason;
     noCamera.hidden = false;
     cameraReady = false;
 };
 
+// Firefox and Chrome do not always throw the same name for the same situation,
+// and "no camera" needs a different fix from "you blocked it" or "it is busy".
+const cameraProblem = (error) => {
+    switch (error.name) {
+        case 'NotAllowedError':
+        case 'SecurityError':
+            return 'Camagru is not allowed to use your camera. Allow it from the icon in the address bar, then reload the page.';
+        case 'NotFoundError':
+        case 'OverconstrainedError':
+            return 'No camera was found on this computer, so upload a picture instead.';
+        case 'NotReadableError':
+        case 'AbortError':
+            return 'Your camera is already in use by another tab or program. Close it, then reload the page.';
+        default:
+            return 'Your camera could not be started (' + error.name + '), so upload a picture instead.';
+    }
+};
+
 const startCamera = async () => {
     if (navigator.mediaDevices === undefined) {
-        stopCamera();
+        stopCamera('Your browser only shares the camera over a secure connection. Open the site on localhost, or upload a picture instead.');
 
         return;
     }
@@ -70,8 +89,8 @@ const startCamera = async () => {
 
         await video.play();
         cameraReady = true;
-    } catch {
-        stopCamera();
+    } catch (error) {
+        stopCamera(cameraProblem(error));
     }
 
     refreshShutter();
