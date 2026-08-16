@@ -6,7 +6,10 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
         <?php foreach ($photos as $photo): ?>
             <div class="col">
-                <?= $this->renderPartial('partials/photo-card', ['photo' => $photo]) ?>
+                <?= $this->renderPartial('partials/photo-card', [
+                    'photo' => $photo,
+                    'returnTo' => '/?page=' . $page,
+                ]) ?>
             </div>
         <?php endforeach; ?>
     </div>

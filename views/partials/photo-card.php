@@ -1,5 +1,6 @@
 <?php
 $href = '/photos/' . $photo['id'];
+$returnTo ??= '/';
 ?>
 <article class="card h-100" id="photo-<?= $photo['id'] ?>">
     <a href="<?= $href ?>">
@@ -15,11 +16,14 @@ $href = '/photos/' . $photo['id'];
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
         </p>
 
-        <p class="card-text mt-auto mb-0 d-flex gap-3 small">
-            <span><span aria-hidden="true">&hearts;</span> <?= $photo['likes'] ?>
-                <span class="visually-hidden">likes</span></span>
-            <a href="<?= $href ?>" class="link-body-emphasis text-decoration-none"><?= $photo['comments'] ?>
+        <div class="card-text mt-auto d-flex gap-3 small align-items-baseline">
+            <?= $this->renderPartial('partials/like-button', [
+                'photo' => $photo,
+                'returnTo' => $returnTo . '#photo-' . $photo['id'],
+            ]) ?>
+
+            <a href="<?= $href ?>" class="link-body-secondary text-decoration-none"><?= $photo['comments'] ?>
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></a>
-        </p>
+        </div>
     </div>
 </article>

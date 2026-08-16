@@ -11,10 +11,14 @@
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
         </p>
 
-        <p class="d-flex gap-3">
-            <span><span aria-hidden="true">&hearts;</span> <?= $photo['likes'] ?>
-                <span class="visually-hidden">likes</span></span>
-            <span><?= $photo['comments'] ?> comment<?= $photo['comments'] === 1 ? '' : 's' ?></span>
-        </p>
+        <div class="d-flex gap-3 align-items-baseline">
+            <?= $this->renderPartial('partials/like-button', [
+                'photo' => $photo,
+                'returnTo' => '/photos/' . $photo['id'],
+            ]) ?>
+
+            <span class="text-body-secondary"><?= $photo['comments'] ?>
+                comment<?= $photo['comments'] === 1 ? '' : 's' ?></span>
+        </div>
     </div>
 </div>

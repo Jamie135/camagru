@@ -7,6 +7,7 @@
 namespace app\controllers;
 
 use app\core\Controller;
+use app\models\Like;
 use app\models\Photo;
 
 class GalleryController extends Controller
@@ -18,8 +19,6 @@ class GalleryController extends Controller
         $total = Photo::count();
         $pages = max(1, (int) ceil($total / self::PER_PAGE));
 
-        // Anything the query string says is clamped into range, so ?page=0,
-        // ?page=-4 and ?page=nonsense land on a real page instead of an error.
         $page = min($pages, max(1, (int) $this->request->query('page', 1)));
 
         $this->view->title = 'Gallery';
@@ -42,5 +41,29 @@ class GalleryController extends Controller
         $this->view->title = 'Photo by ' . $photo['author'];
 
         return $this->render('gallery/show', ['photo' => $photo]);
+    }
+
+    public function like(string $id): string
+    {
+        if (($redirect = $this->requireAuth()) !== null) {
+            return $redirect;
+        }
+
+        $photo = Photo::findById((int) $id);
+
+        if ($photo === null) {
+            return $this->notFound();
+        }
+
+        $liked = Like::toggle($photo['id'], (int) $this->auth->id());
+        $likes = Like::countFor($photo['id']);
+
+        if ($this->request->wantsJson()) {
+            return $this->json(['liked' => $liked, 'likes' => $likes]);
+        }
+
+        $returnTo = $this->request->post('return_to');
+
+        return $this->redirect(is_string($returnTo) ? $returnTo : '/photos/' . $photo['id']);
     }
 }
