@@ -7,13 +7,13 @@
     <title><?= $this->e($this->title) ?></title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
 
     <?php foreach ($this->styles as $href): ?>
         <link rel="stylesheet" href="<?= $this->e($href) ?>">
     <?php endforeach; ?>
 </head>
 
-<?php // Column layout so the footer is pushed down on pages too short to fill the screen. ?>
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
@@ -30,6 +30,12 @@
                         <a class="nav-link <?= $this->path === '/' ? 'active' : '' ?>"
                            <?= $this->path === '/' ? 'aria-current="page"' : '' ?> href="/">Gallery</a>
                     </li>
+                    <?php if ($this->user !== null): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?= $this->path === '/editor' ? 'active' : '' ?>"
+                               <?= $this->path === '/editor' ? 'aria-current="page"' : '' ?> href="/editor">Take a picture</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
 
                 <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
@@ -46,7 +52,6 @@
                                href="/profile"><?= $this->e($this->user['username']) ?></a>
                         </li>
                         <li class="nav-item">
-                            <?php // One click, on every page, because the layout wraps every page. ?>
                             <form method="post" action="/logout">
                                 <?= $this->csrfField() ?>
                                 <button type="submit" class="btn btn-link nav-link">Sign out</button>
@@ -74,7 +79,6 @@
             <p class="mb-0">Camagru &mdash; 42 project</p>
 
             <p class="mb-0 d-flex align-items-center gap-3">
-                <?php // rel="noopener": without it the opened tab can reach back through window.opener. ?>
                 <a href="https://github.com/Jamie135/camagru" target="_blank" rel="noopener noreferrer"
                    class="link-body-secondary d-inline-flex align-items-center gap-1 text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
@@ -86,6 +90,20 @@
             </p>
         </div>
     </footer>
+
+    <dialog data-dialog data-confirm aria-labelledby="confirm-title">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title h5" id="confirm-title">Delete this picture?</h2>
+                <p class="card-text mb-0">It will be removed from the gallery for good. This cannot be undone.</p>
+            </div>
+
+            <div class="card-footer bg-body-tertiary d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" data-confirm-cancel>Cancel</button>
+                <button type="button" class="btn btn-danger" data-confirm-ok>Delete</button>
+            </div>
+        </div>
+    </dialog>
 
     <script src="/js/layout.js"></script>
 

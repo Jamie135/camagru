@@ -1,7 +1,10 @@
 /* cover matches ImageEditor::cover(); fill matches its full-bleed stamp. */
-[data-video] { object-fit: cover; }
+[data-video],
+[data-upload-preview],
+[data-capture-preview] { object-fit: cover; }
 
-[data-overlay-preview] { object-fit: fill; pointer-events: none; }
+[data-overlay-preview],
+[data-capture-overlay] { object-fit: fill; pointer-events: none; }
 
 /* The side column scrolls on its own rather than outgrowing the stage. */
 @media (min-width: 992px) {

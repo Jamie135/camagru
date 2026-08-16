@@ -30,10 +30,13 @@ class EditorController extends Controller
 
         $this->view->title = 'Take a picture';
         $this->view->styles[] = '/css/editor.css';
+        $this->view->scripts[] = '/js/editor.js';
 
         return $this->render('editor/index', [
             'overlays' => $overlays,
             'photos' => Photo::panel((int) $this->auth->id()),
+            'width' => ImageEditor::WIDTH,
+            'height' => ImageEditor::HEIGHT,
         ]);
     }
 

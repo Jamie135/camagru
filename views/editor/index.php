@@ -2,10 +2,15 @@
     <div class="col-lg-8">
         <h1 class="h3 mb-3">Take a picture</h1>
 
-        <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden" data-stage>
+        <?php // The capture size comes from ImageEditor, so the canvas cannot drift from the composite. ?>
+        <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden" data-stage
+             data-width="<?= $width ?>" data-height="<?= $height ?>">
             <video autoplay muted playsinline data-video></video>
 
-            <?php // The live preview: the very PNG the server will stamp. ?>
+            <?php // The chosen file, previewed in the camera's place and cropped the same way. ?>
+            <img alt="The picture you chose" hidden data-upload-preview>
+
+            <?php // The live preview: the very PNG the server will stamp. Last, so it sits on top. ?>
             <img alt="" hidden data-overlay-preview>
         </div>
 
@@ -46,7 +51,13 @@
                 <label for="photo" class="form-label">No camera? Upload a picture instead</label>
                 <input type="file" class="form-control" id="photo" name="photo"
                        accept="image/jpeg,image/png" required>
-                <div class="form-text">JPEG or PNG, up to 8&nbsp;MB.</div>
+
+                <div class="form-text">
+                    JPEG or PNG, up to 8&nbsp;MB.
+                    <button type="button" class="btn btn-link btn-sm p-0 align-baseline" hidden data-use-camera>
+                        Go back to the camera
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-outline-primary">Upload</button>
@@ -67,3 +78,22 @@
         </div>
     </div>
 </div>
+
+<?php // Outside every form, so its buttons can never submit one. ?>
+<dialog data-dialog data-capture-dialog class="dialog-wide" aria-labelledby="capture-title">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="card-title h5" id="capture-title">Keep this picture?</h2>
+
+            <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden">
+                <img alt="The picture you just took" data-capture-preview>
+                <img alt="" data-capture-overlay>
+            </div>
+        </div>
+
+        <div class="card-footer bg-body-tertiary d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" data-retake>Take another</button>
+            <button type="button" class="btn btn-primary" data-use-capture>Publish it</button>
+        </div>
+    </div>
+</dialog>

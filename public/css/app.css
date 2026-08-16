@@ -1,0 +1,16 @@
+/* Native <dialog> wearing Bootstrap's modal styling, without Bootstrap's JavaScript. */
+dialog[data-dialog] {
+    width: 100%;
+    max-width: min(32rem, calc(100vw - 2rem));
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+dialog[data-dialog].dialog-wide {
+    max-width: min(44rem, calc(100vw - 2rem));
+}
+
+dialog[data-dialog]::backdrop {
+    background: rgb(0 0 0 / 50%);
+}

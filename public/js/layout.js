@@ -1,9 +1,3 @@
-// The layout uses Bootstrap's CSS only — a CSS framework is tolerated, its
-// JavaScript is not — so the two interactive pieces are wired up natively here.
-
-// Mobile navbar. Bootstrap's .collapse / .show pair is plain CSS, so flipping
-// the class is all its plugin did for us. Above the lg breakpoint the menu is
-// shown regardless and the toggler is hidden, so this only bites on phones.
 document.querySelectorAll('[data-toggle-target]').forEach((toggler) => {
     const menu = document.querySelector(toggler.dataset.toggleTarget);
 
@@ -26,3 +20,46 @@ document.addEventListener('click', (event) => {
         button.closest('.alert').remove();
     }
 });
+
+const confirmDialog = document.querySelector('[data-confirm]');
+
+if (confirmDialog !== null) {
+    let pending = null;
+
+    document.addEventListener('submit', (event) => {
+        const form = event.target.closest('[data-delete]');
+
+        // The second pass, once the question has been answered, goes through.
+        if (form === null || form.dataset.confirmed === 'yes') {
+            return;
+        }
+
+        event.preventDefault();
+        pending = form;
+
+        confirmDialog.showModal();
+    });
+
+    confirmDialog.querySelector('[data-confirm-ok]').addEventListener('click', () => {
+        const form = pending;
+
+        pending = null;
+        confirmDialog.close();
+
+        if (form === null) {
+            return;
+        }
+
+        form.dataset.confirmed = 'yes';
+        form.requestSubmit();
+    });
+
+    confirmDialog.querySelector('[data-confirm-cancel]').addEventListener('click', () => {
+        confirmDialog.close();
+    });
+
+    // Covers Escape and the cancel button alike.
+    confirmDialog.addEventListener('close', () => {
+        pending = null;
+    });
+}
