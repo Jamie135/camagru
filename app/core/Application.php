@@ -46,6 +46,12 @@ class Application
     {
         // Check CSRF token for POST requests before resolving the route.
         if ($this->request->isPost() && !$this->csrf->verify($this->request->post(Csrf::FIELD))) {
+            if ($this->request->wantsJson()) {
+                echo $this->response->json(['error' => 'Your session has expired. Reload the page and try again.'], 403);
+
+                return;
+            }
+
             $this->response->setStatusCode(403);
             $this->view->title = 'Request rejected';
 

@@ -39,6 +39,21 @@ class Request
         return $_POST[$key] ?? $default;
     }
 
+    // Returns the value of a query string parameter, or a default value if it doesn't exist.
+    public function query(string $key, mixed $default = null): mixed
+    {
+        return $_GET[$key] ?? $default;
+    }
+
+    public function wantsJson(): bool
+    {
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+            return true;
+        }
+
+        return str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+    }
+
     // The whole POST body, as handed to a Validator.
     public function body(): array
     {

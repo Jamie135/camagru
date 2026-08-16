@@ -26,4 +26,12 @@ class Response
 
         return '';
     }
+
+    public function json(array $data, int $code = 200): string
+    {
+        $this->setStatusCode($code);
+        header('Content-Type: application/json; charset=utf-8');
+
+        return json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
 }

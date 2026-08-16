@@ -29,11 +29,20 @@ abstract class Controller
         return $this->response->redirect($path);
     }
 
+    protected function json(array $data, int $code = 200): string
+    {
+        return $this->response->json($data, $code);
+    }
+
     // Guards for actions that only make sense one side of the login.
     protected function requireAuth(string $to = '/login'): ?string
     {
         if ($this->auth->check()) {
             return null;
+        }
+
+        if ($this->request->wantsJson()) {
+            return $this->json(['error' => 'Please sign in to continue.'], 401);
         }
 
         $this->session->flash('warning', 'Please sign in to continue.');

@@ -70,6 +70,10 @@ class Router
         }
 
         if ($callback === null) {
+            if ($this->request->wantsJson()) {
+                return $this->response->json(['error' => 'Not found.'], 404);
+            }
+
             $this->response->setStatusCode(404);
             $this->view->title = 'Page not found';
 
