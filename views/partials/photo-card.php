@@ -3,12 +3,11 @@ $href = '/photos/' . $photo['id'];
 $returnTo ??= '/';
 $thread ??= [];
 
-// The card shows the tail of the conversation; the rest is on the photo's page.
 $latest = array_slice($thread, -3);
 ?>
 <article class="card h-100" id="photo-<?= $photo['id'] ?>">
     <a href="<?= $href ?>">
-        <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="card-img-top"
+        <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="card-img-top img-fluid"
              alt="Photo by <?= $this->e($photo['author']) ?>"
              width="640" height="480" loading="lazy">
     </a>
@@ -20,7 +19,7 @@ $latest = array_slice($thread, -3);
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
         </p>
 
-        <div class="card-text mt-auto d-flex gap-3 small align-items-baseline">
+        <div class="card-text d-flex gap-3 small align-items-baseline">
             <?= $this->renderPartial('partials/like-button', [
                 'photo' => $photo,
                 'returnTo' => $returnTo . '#photo-' . $photo['id'],
@@ -54,7 +53,7 @@ $latest = array_slice($thread, -3);
             <ul class="list-unstyled mt-3 mb-0" data-thread></ul>
         <?php endif; ?>
 
-        <div class="mt-2">
+        <div class="mt-auto pt-2">
             <?= $this->renderPartial('partials/comment-form', [
                 'photo' => $photo,
                 'returnTo' => $returnTo . '#photo-' . $photo['id'],
