@@ -4,7 +4,7 @@ $old ??= [];
 ?>
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-        <h1 class="h3 my-4">Sign in</h1>
+        <h1 class="page-title">Sign in</h1>
 
         <form method="post" action="/login" novalidate>
             <?= $this->csrfField() ?>

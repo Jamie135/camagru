@@ -6,20 +6,20 @@ $thread ??= [];
 $latest = array_slice($thread, -3);
 ?>
 <article class="card h-100" id="photo-<?= $photo['id'] ?>">
-    <a href="<?= $href ?>">
-        <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="card-img-top img-fluid"
+    <a href="<?= $href ?>" class="photo-mat">
+        <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="img-fluid"
              alt="Photo by <?= $this->e($photo['author']) ?>"
              width="640" height="480" loading="lazy">
     </a>
 
     <div class="card-body d-flex flex-column">
-        <p class="card-text mb-1"><strong><?= $this->e($photo['author']) ?></strong></p>
+        <p class="card-text placard-author mb-0"><?= $this->e($photo['author']) ?></p>
 
-        <p class="card-text text-body-secondary small mb-3">
+        <p class="card-text placard-date text-body-secondary mb-3">
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
         </p>
 
-        <div class="card-text d-flex gap-3 small align-items-baseline">
+        <div class="card-text d-flex gap-3 small align-items-baseline border-top pt-2">
             <?= $this->renderPartial('partials/like-button', [
                 'photo' => $photo,
                 'returnTo' => $returnTo . '#photo-' . $photo['id'],

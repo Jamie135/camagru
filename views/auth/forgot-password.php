@@ -4,7 +4,7 @@ $old ??= [];
 ?>
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-        <h1 class="h3 my-4">Forgotten your password?</h1>
+        <h1 class="page-title">Forgotten your password?</h1>
 
         <p class="text-body-secondary">
             Type the address you signed up with and we will email you a link to

@@ -1,0 +1,366 @@
+/* Nymphéas: Bootstrap re-skinned through its own custom properties, so the views keep their classes. */
+
+:root {
+    --ny-ink: #16293c;
+    --ny-pond: #2c5578;
+    --ny-blue: #4a7ba7;
+    --ny-reflection: #9dbdd6;
+    --ny-mist: #dce8f0;
+    --ny-linen: #f2ece0;
+    --ny-surface: #fffdf8;
+    --ny-hairline: #d8cfbf;
+    --ny-lily: #d4879c;
+    --ny-shadow: 22 41 60;
+
+    --ny-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+    /* Bootstrap reads these; overriding them re-skins every component at once. */
+    --bs-body-bg: var(--ny-linen);
+    --bs-body-color: var(--ny-ink);
+    --bs-emphasis-color: var(--ny-ink);
+    --bs-secondary-color: #55697d;
+    --bs-secondary-bg: var(--ny-mist);
+    --bs-tertiary-bg: #ebe3d5;
+    --bs-border-color: var(--ny-hairline);
+    --bs-border-radius: 2px;
+    --bs-border-radius-sm: 2px;
+    --bs-border-radius-lg: 3px;
+
+    --bs-primary: var(--ny-pond);
+    --bs-primary-rgb: 44, 85, 120;
+    --bs-link-color: var(--ny-pond);
+    --bs-link-color-rgb: 44, 85, 120;
+    --bs-link-hover-color: var(--ny-ink);
+
+    --bs-body-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --bs-body-font-size: 1rem;
+    --bs-body-line-height: 1.65;
+}
+
+/* A canvas grain over everything: 3% is what keeps a flat blue from reading as flat. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body {
+    background-image:
+        radial-gradient(70rem 40rem at 12% -10%, rgb(157 189 214 / 28%), transparent 60%),
+        radial-gradient(60rem 36rem at 92% 4%, rgb(220 232 240 / 45%), transparent 55%);
+    background-attachment: fixed;
+}
+
+/* -- Type ---------------------------------------------------------------- */
+
+h1, h2, h3, h4,
+.h1, .h2, .h3, .h4,
+.navbar-brand,
+.card-title,
+legend {
+    font-family: var(--ny-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.page-title {
+    font-family: var(--ny-serif);
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-block: 2.5rem 2rem;
+    text-wrap: balance;
+}
+
+/* -- Navbar -------------------------------------------------------------- */
+
+.navbar {
+    --bs-navbar-color: var(--bs-secondary-color);
+    --bs-navbar-hover-color: var(--ny-ink);
+    --bs-navbar-active-color: var(--ny-pond);
+    --bs-navbar-brand-color: var(--ny-ink);
+    --bs-navbar-brand-hover-color: var(--ny-pond);
+    --bs-navbar-brand-font-size: 1.5rem;
+
+    background: transparent !important;
+    border-bottom: 1px solid var(--ny-hairline);
+}
+
+.navbar-brand {
+    font-style: italic;
+    font-weight: 300;
+}
+
+.navbar .nav-link {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid transparent;
+}
+
+.navbar .nav-link.active {
+    border-bottom-color: var(--ny-blue);
+}
+
+/* The sign-out button is a form control wearing nav-link; strip the link chrome. */
+.navbar .btn-link.nav-link {
+    text-decoration: none;
+    border: 0;
+    padding-inline: 0;
+}
+
+/* -- Buttons ------------------------------------------------------------- */
+
+/* Scoped to the variants that are real actions: btn-link and the overlay
+   picker's outline-secondary labels must keep their own sizing. */
+.btn-primary,
+.btn-outline-primary,
+.btn-secondary,
+.btn-danger {
+    --bs-btn-padding-x: 1.35rem;
+    --bs-btn-padding-y: 0.6rem;
+    --bs-btn-font-size: 0.78rem;
+    --bs-btn-font-weight: 600;
+
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--ny-pond);
+    --bs-btn-border-color: var(--ny-pond);
+    --bs-btn-color: #fdfbf7;
+    --bs-btn-hover-bg: var(--ny-ink);
+    --bs-btn-hover-border-color: var(--ny-ink);
+    --bs-btn-hover-color: #fdfbf7;
+    --bs-btn-active-bg: var(--ny-ink);
+    --bs-btn-active-border-color: var(--ny-ink);
+    --bs-btn-disabled-bg: var(--ny-reflection);
+    --bs-btn-disabled-border-color: var(--ny-reflection);
+    --bs-btn-disabled-color: #fdfbf7;
+
+    box-shadow: 0 1px 2px rgb(var(--ny-shadow) / 12%);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--ny-pond);
+    --bs-btn-border-color: var(--ny-reflection);
+    --bs-btn-hover-bg: var(--ny-mist);
+    --bs-btn-hover-border-color: var(--ny-blue);
+    --bs-btn-hover-color: var(--ny-ink);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-outline-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px -4px rgb(var(--ny-shadow) / 35%);
+}
+
+.btn-secondary {
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: var(--ny-hairline);
+    --bs-btn-color: var(--bs-secondary-color);
+    --bs-btn-hover-bg: var(--ny-mist);
+    --bs-btn-hover-border-color: var(--ny-reflection);
+    --bs-btn-hover-color: var(--ny-ink);
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgb(74 123 167 / 30%);
+}
+
+/* -- Cards, and the photo inside them ------------------------------------ */
+
+.card {
+    --bs-card-bg: var(--ny-surface);
+    --bs-card-border-color: var(--ny-hairline);
+    --bs-card-cap-bg: transparent;
+
+    box-shadow:
+        0 1px 2px rgb(var(--ny-shadow) / 6%),
+        0 8px 24px -12px rgb(var(--ny-shadow) / 18%);
+}
+
+/* The mat: ivory margin between the frame and the picture, as a print would be mounted. */
+.photo-mat {
+    display: block;
+    padding: 0.6rem 0.6rem 0;
+}
+
+.photo-mat img {
+    display: block;
+    width: 100%;
+    box-shadow: inset 0 0 0 1px rgb(var(--ny-shadow) / 12%);
+}
+
+/* The same mounting for a photo shown on its own, where no card body follows. */
+.photo-plate {
+    display: block;
+    padding: 0.75rem;
+    background: var(--ny-surface);
+    border: 1px solid var(--ny-hairline);
+    box-shadow:
+        0 1px 2px rgb(var(--ny-shadow) / 6%),
+        0 8px 24px -12px rgb(var(--ny-shadow) / 18%);
+}
+
+.photo-plate img {
+    display: block;
+    width: 100%;
+    box-shadow: inset 0 0 0 1px rgb(var(--ny-shadow) / 12%);
+}
+
+article.card {
+    transition: box-shadow 240ms ease, transform 240ms ease;
+}
+
+article.card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 2px rgb(var(--ny-shadow) / 7%),
+        0 18px 40px -16px rgb(var(--ny-shadow) / 28%);
+}
+
+/* Author reads as a placard line, date as the curator's italic beneath it. */
+.card .placard-author {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.card .placard-date {
+    font-family: var(--ny-serif);
+    font-style: italic;
+    font-size: 1rem;
+}
+
+/* -- Likes --------------------------------------------------------------- */
+
+/* Lily pink for a like; --bs-danger stays red so deleting still reads as destructive. */
+[data-like] .link-danger {
+    color: var(--ny-lily) !important;
+}
+
+[data-like] .btn-link:focus-visible {
+    box-shadow: none;
+    outline: 2px solid var(--ny-blue);
+    outline-offset: 2px;
+}
+
+/* -- Forms --------------------------------------------------------------- */
+
+.form-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0.4rem;
+}
+
+.form-control,
+.form-select {
+    background-color: var(--ny-surface);
+    border-color: var(--ny-hairline);
+    border-bottom: 2px solid var(--ny-reflection);
+    color: var(--ny-ink);
+    padding: 0.65rem 0.85rem;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.form-control::placeholder {
+    color: var(--bs-secondary-color);
+    font-style: italic;
+    opacity: 0.75;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--ny-surface);
+    border-color: var(--ny-hairline);
+    border-bottom-color: var(--ny-pond);
+    box-shadow: 0 0 0 4px rgb(74 123 167 / 16%);
+}
+
+/* The comment box sits in an input-group, where a heavy underline would misalign the button. */
+.input-group .form-control {
+    border-bottom-width: 1px;
+    padding: 0.4rem 0.7rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--ny-pond);
+    border-color: var(--ny-pond);
+}
+
+.form-check-input:focus {
+    border-color: var(--ny-reflection);
+    box-shadow: 0 0 0 4px rgb(74 123 167 / 16%);
+}
+
+.form-text {
+    color: var(--bs-secondary-color);
+}
+
+/* -- Alerts, pagination, footer ------------------------------------------ */
+
+.alert {
+    --bs-alert-border-color: var(--ny-hairline);
+    border-radius: 2px;
+    border-left-width: 3px;
+}
+
+.alert-success {
+    --bs-alert-color: #3f5638;
+    --bs-alert-bg: #eef2ea;
+    --bs-alert-border-color: #7f9b74;
+}
+
+.alert-warning {
+    --bs-alert-color: #6b5326;
+    --bs-alert-bg: #f6efdf;
+    --bs-alert-border-color: #c9a961;
+}
+
+.pagination {
+    --bs-pagination-color: var(--ny-pond);
+    --bs-pagination-bg: transparent;
+    --bs-pagination-border-color: var(--ny-hairline);
+    --bs-pagination-hover-bg: var(--ny-mist);
+    --bs-pagination-hover-color: var(--ny-ink);
+    --bs-pagination-active-bg: var(--ny-pond);
+    --bs-pagination-active-border-color: var(--ny-pond);
+    --bs-pagination-focus-box-shadow: 0 0 0 4px rgb(74 123 167 / 16%);
+}
+
+footer.bg-body-tertiary {
+    background: transparent !important;
+    border-top: 1px solid var(--ny-hairline) !important;
+}
+
+/* -- Editor ------------------------------------------------------------- */
+
+/* The viewfinder: water in shade, with a vignette so the frame edge falls away. */
+.viewfinder {
+    position: relative;
+    background: radial-gradient(120% 90% at 50% 0%, #2c5578 0%, #16293c 55%, #0c1926 100%);
+    box-shadow:
+        inset 0 0 60px rgb(0 0 0 / 45%),
+        inset 0 0 0 1px rgb(157 189 214 / 16%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

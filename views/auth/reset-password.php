@@ -3,7 +3,7 @@ $errors ??= [];
 ?>
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-        <h1 class="h3 my-4">Choose a new password</h1>
+        <h1 class="page-title">Choose a new password</h1>
 
         <form method="post" action="/reset-password/<?= $this->e($token) ?>" novalidate>
             <?= $this->csrfField() ?>

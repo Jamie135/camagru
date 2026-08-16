@@ -1,16 +1,16 @@
+<h1 class="page-title">Take a picture</h1>
+
+<?php // The title sits above the row so the stage and the side panel share a top edge. ?>
 <div class="row g-4 my-1">
     <div class="col-lg-8">
-        <h1 class="h3 mb-3">Take a picture</h1>
+        <h2 class="h5 mb-3">Camera</h2>
 
-        <?php // The capture size comes from ImageEditor, so the canvas cannot drift from the composite. ?>
-        <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden" data-stage
+        <div class="ratio ratio-4x3 viewfinder rounded overflow-hidden" data-stage
              data-width="<?= $width ?>" data-height="<?= $height ?>">
             <video autoplay muted playsinline data-video></video>
 
-            <?php // The chosen file, previewed in the camera's place and cropped the same way. ?>
             <img alt="The picture you chose" hidden data-upload-preview>
 
-            <?php // The live preview: the very PNG the server will stamp. Last, so it sits on top. ?>
             <img alt="" hidden data-overlay-preview>
         </div>
 
@@ -18,11 +18,9 @@
             No camera is available, so upload a picture instead.
         </p>
 
-        <?php // Radios rather than buttons, so the form still submits with JavaScript off. ?>
         <form method="post" action="/editor" enctype="multipart/form-data" class="mt-3">
             <?= $this->csrfField() ?>
 
-            <?php // Inactive until an overlay is chosen, and driven entirely by editor.js. ?>
             <button type="button" class="btn btn-primary mb-4" disabled data-shutter>
                 Take the picture
             </button>
@@ -79,13 +77,12 @@
     </div>
 </div>
 
-<?php // Outside every form, so its buttons can never submit one. ?>
 <dialog data-dialog data-capture-dialog class="dialog-wide" aria-labelledby="capture-title">
     <div class="card shadow-lg">
         <div class="card-body">
             <h2 class="card-title h5" id="capture-title">Keep this picture?</h2>
 
-            <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden">
+            <div class="ratio ratio-4x3 viewfinder rounded overflow-hidden">
                 <img alt="The picture you just took" data-capture-preview>
                 <img alt="" data-capture-overlay>
             </div>

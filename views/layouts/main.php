@@ -7,6 +7,13 @@
     <title><?= $this->e($this->title) ?></title>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;600;700&display=swap">
+
+    <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/app.css">
 
     <?php foreach ($this->styles as $href): ?>
@@ -17,7 +24,15 @@
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="/">Camagru</a>
+            <a class="navbar-brand me-lg-0 d-inline-flex align-items-center gap-2" href="/">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.4" aria-hidden="true">
+                    <ellipse cx="12" cy="14" rx="9" ry="5.5"/>
+                    <path d="M12 14 L12 8.5"/>
+                    <circle cx="12" cy="7" r="2.4" fill="currentColor" stroke="none"/>
+                </svg>
+                Camagru
+            </a>
 
             <button class="navbar-toggler" type="button" data-toggle-target="#nav"
                     aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +40,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="nav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mx-lg-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link <?= $this->path === '/' ? 'active' : '' ?>"
                            <?= $this->path === '/' ? 'aria-current="page"' : '' ?> href="/">Gallery</a>
@@ -33,7 +48,11 @@
                     <?php if ($this->user !== null): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= $this->path === '/editor' ? 'active' : '' ?>"
-                               <?= $this->path === '/editor' ? 'aria-current="page"' : '' ?> href="/editor">Take a picture</a>
+                               <?= $this->path === '/editor' ? 'aria-current="page"' : '' ?> href="/editor">Studio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= $this->path === '/profile' ? 'active' : '' ?>"
+                               href="/profile">Settings</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -47,10 +66,6 @@
                             <a class="nav-link <?= $this->path === '/register' ? 'active' : '' ?>" href="/register">Sign up</a>
                         </li>
                     <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?= $this->path === '/profile' ? 'active' : '' ?>"
-                               href="/profile"><?= $this->e($this->user['username']) ?></a>
-                        </li>
                         <li class="nav-item">
                             <form method="post" action="/logout">
                                 <?= $this->csrfField() ?>

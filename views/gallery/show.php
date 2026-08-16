@@ -2,12 +2,14 @@
     <div class="col-lg-8">
         <p class="my-4"><a href="/" class="link-body-emphasis">&larr; Back to the gallery</a></p>
 
-        <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="img-fluid rounded"
-             alt="Photo by <?= $this->e($photo['author']) ?>" width="640" height="480">
+        <div class="photo-plate">
+            <img src="/uploads/<?= $this->e($photo['filename']) ?>" class="img-fluid"
+                 alt="Photo by <?= $this->e($photo['author']) ?>" width="640" height="480">
+        </div>
 
         <h1 class="h4 mt-4 mb-1">Photo by <?= $this->e($photo['author']) ?></h1>
 
-        <p class="text-body-secondary small">
+        <p class="placard-date text-body-secondary">
             <time datetime="<?= $this->e($photo['created_at']) ?>"><?= $this->e($this->date($photo['created_at'])) ?></time>
         </p>
 

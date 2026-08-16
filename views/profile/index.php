@@ -10,7 +10,7 @@ $in = fn (string $name): array => $section === $name ? $errors : [];
 ?>
 <div class="row justify-content-center">
     <div class="col-lg-7">
-        <h1 class="h3 my-4">Your account</h1>
+        <h1 class="page-title">Your account</h1>
 
         <?php if ($user['pending_email'] !== null): ?>
             <div class="alert alert-warning d-flex justify-content-between align-items-center">

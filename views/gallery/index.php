@@ -1,4 +1,4 @@
-<h1 class="h3 my-4">Gallery</h1>
+<h1 class="page-title">Gallery</h1>
 
 <?php if ($photos === []): ?>
     <p class="text-body-secondary">Nothing here yet.</p>
