@@ -19,6 +19,14 @@
 
             <span class="text-body-secondary" data-comment-count><?= $photo['comments'] ?>
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></span>
+
+            <span class="ms-auto">
+                <?php // Back to the gallery, not to this page: it is about to 404. ?>
+                <?= $this->renderPartial('partials/delete-button', [
+                    'photo' => $photo,
+                    'returnTo' => '/',
+                ]) ?>
+            </span>
         </div>
 
         <ul class="list-unstyled mt-4" data-thread>

@@ -29,6 +29,13 @@ $latest = array_slice($thread, -3);
             <a href="<?= $href ?>" class="link-body-secondary text-decoration-none"
                data-comment-count><?= $photo['comments'] ?>
                 comment<?= $photo['comments'] === 1 ? '' : 's' ?></a>
+
+            <span class="ms-auto">
+                <?= $this->renderPartial('partials/delete-button', [
+                    'photo' => $photo,
+                    'returnTo' => $returnTo,
+                ]) ?>
+            </span>
         </div>
 
         <?php if ($latest !== []): ?>

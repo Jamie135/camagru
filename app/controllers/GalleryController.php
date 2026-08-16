@@ -72,7 +72,7 @@ class GalleryController extends Controller
             return $this->json(['liked' => $liked, 'likes' => $likes]);
         }
 
-        return $this->back($photo);
+        return $this->back('/photos/' . $photo['id']);
     }
 
     public function comment(string $id): string
@@ -97,7 +97,7 @@ class GalleryController extends Controller
 
             $this->session->flash('danger', $validator->error('body'));
 
-            return $this->back($photo);
+            return $this->back('/photos/' . $photo['id']);
         }
 
         $author = $this->auth->user();
@@ -112,7 +112,39 @@ class GalleryController extends Controller
             ]);
         }
 
-        return $this->back($photo);
+        return $this->back('/photos/' . $photo['id']);
+    }
+
+    public function destroy(string $id): string
+    {
+        if (($redirect = $this->requireAuth()) !== null) {
+            return $redirect;
+        }
+
+        $filename = Photo::deleteOwned((int) $id, (int) $this->auth->id());
+
+        if ($filename === null) {
+            return $this->notFound();
+        }
+
+        $this->removeFile($filename);
+
+        if ($this->request->wantsJson()) {
+            return $this->json(['deleted' => true]);
+        }
+
+        $this->session->flash('success', 'Your photo has been deleted.');
+
+        return $this->back('/');
+    }
+
+    private function removeFile(string $filename): void
+    {
+        $path = ROOT_DIR . '/data/uploads/' . basename($filename);
+
+        if (is_file($path)) {
+            unlink($path);
+        }
     }
 
     private function notifyAuthor(array $photo, array $commenter, string $body): void
@@ -136,10 +168,10 @@ class GalleryController extends Controller
         );
     }
 
-    private function back(array $photo): string
+    private function back(string $fallback): string
     {
         $returnTo = $this->request->post('return_to');
 
-        return $this->redirect(is_string($returnTo) ? $returnTo : '/photos/' . $photo['id']);
+        return $this->redirect(is_string($returnTo) ? $returnTo : $fallback);
     }
 }
