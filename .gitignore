@@ -3,3 +3,4 @@ data/uploads/*
 !data/uploads/.gitkeep
 runtime/
 .idea/
+docker-compose.override.yml
