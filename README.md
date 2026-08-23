@@ -15,6 +15,7 @@ like and comment on it.
 | `php`      | PHP 8.3-FPM with `pdo_pgsql` and `gd` (JPEG support compiled in)  |
 | `db`       | PostgreSQL 16; SQL files in `db/init/` run once on first boot     |
 | `mailpit`  | Catches all outgoing mail so account confirmations and password resets can be read locally |
+| `adminer`  | Browser UI for the database. Opt-in: only starts with the `dev` profile |
 
 ## Getting started
 
@@ -26,6 +27,7 @@ docker compose up -d --build
 
 - App: <http://localhost:8080>
 - Mail UI: <http://localhost:8025>
+- Adminer: <http://localhost:8081>
 
 Both ports come from `.env` (`NGINX_PORT`, `MAILPIT_UI_PORT`); change them there
 if something else already owns 8080.
@@ -37,6 +39,7 @@ if something else already owns 8080.
 ```sh
 docker compose up -d              # start everything in the background
 docker compose up -d --build      # rebuild the PHP image, then start
+docker compose --profile dev up -d # start everything, plus the Adminer DB UI
 docker compose ps                 # what is running, and is it healthy
 docker compose stop               # stop, keep containers and data
 docker compose down               # remove containers, keep the db volume
@@ -65,6 +68,27 @@ docker compose exec php bash
 docker compose exec php php -v
 docker compose exec php php -m                      # confirm gd / pdo_pgsql are loaded
 docker compose exec php php -l app/some_file.php    # syntax check
+```
+
+### Database UI
+
+Adminer gives the schema and its rows a browser UI. It is dev-only, so it sits
+behind a Compose profile and never starts with a plain `docker compose up`:
+
+```sh
+docker compose --profile dev up -d adminer   # start it
+docker compose stop adminer                  # stop it, leave the rest running
+```
+
+Go to `SQL command` in the sidebar to check the database with querries.
+
+Password hashing check:
+
+```bash
+SELECT id, username,
+       password_hash
+FROM users
+ORDER BY id;
 ```
 
 ### Database
