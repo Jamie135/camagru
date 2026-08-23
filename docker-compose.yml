@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx:1.27-alpine
+    image: docker.io/library/nginx:1.27-alpine
     ports:
       - "${NGINX_PORT}:80"
     volumes:
@@ -32,7 +32,7 @@ services:
         condition: service_healthy
   
   db:
-    image: postgres:16-alpine
+    image: docker.io/library/postgres:16-alpine
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -47,7 +47,7 @@ services:
       retries: 20
   
   mailpit:
-    image: axllent/mailpit:latest
+    image: docker.io/axllent/mailpit:latest
     ports:
       - "${MAILPIT_UI_PORT}:8025"
   
