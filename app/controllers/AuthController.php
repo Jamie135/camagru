@@ -23,6 +23,11 @@ class AuthController extends Controller
 
     private const DEAD_RESET_LINK = 'That link has expired or has already been used. Ask for another one.';
 
+    private const CONFIRM_SENT = 'Almost done — open the link we just emailed you to switch to your new password.';
+
+    private const UNCONFIRMED_PASSWORD =
+        'That password is waiting to be confirmed — open the link we emailed you. Your old one still works until then.';
+
     private ?AuthMailer $mailer = null;
 
     // -----------------------------------------------------------------------
@@ -110,6 +115,10 @@ class AuthController extends Controller
             : User::findByUsername($login);
 
         if (!User::verifyPassword($user, $password)) {
+            if (User::isPendingPassword($user, $password)) {
+                return $this->loginForm(['login' => self::UNCONFIRMED_PASSWORD], $login);
+            }
+
             return $this->loginForm(['login' => self::BAD_CREDENTIALS], $login);
         }
 
@@ -182,14 +191,14 @@ class AuthController extends Controller
         return $this->redirect('/login');
     }
 
-    // Password reset sent by email
+    // No guest guard: this is also where the profile's change-password button
+    // lands, and whoever follows the link is signed out once it succeeds.
     public function resetPassword(string $token): string
     {
-        if (($redirect = $this->requireGuest()) !== null) {
-            return $redirect;
-        }
+        // Read before the reset, which clears the token the row is found by.
+        $user = User::findByResetToken($token);
 
-        if (User::findByResetToken($token) === null) {
+        if ($user === null) {
             $this->session->flash('danger', self::DEAD_RESET_LINK);
 
             return $this->redirect('/forgot-password');
@@ -211,14 +220,33 @@ class AuthController extends Controller
             ]);
         }
 
-        if (!User::resetPassword($token, $validator->value('password'))) {
+        $changeToken = User::newToken();
+
+        // Nothing on the account moves yet: the new password only takes over
+        // once the link below comes back, so until then the old one still works.
+        if (!User::startPasswordChange($token, $validator->value('password'), $changeToken)) {
             $this->session->flash('danger', self::DEAD_RESET_LINK);
 
             return $this->redirect('/forgot-password');
         }
 
-        $this->session->invalidate();
-        $this->session->flash('success', 'Your password has been changed. You can sign in with it now.');
+        $this->mailer()->sendPasswordChange($user['email'], $user['username'], $changeToken);
+
+        $this->session->flash('info', self::CONFIRM_SENT);
+
+        return $this->redirect('/login');
+    }
+
+    public function confirmPassword(string $token): string
+    {
+        if (User::confirmPasswordChange($token)) {
+            // Signed out everywhere this session reached, since the password
+            // that opened it is not the account's password any more.
+            $this->session->invalidate();
+            $this->session->flash('success', 'Your new password is active. You can sign in with it now.');
+        } else {
+            $this->session->flash('danger', 'That link has expired or has already been used. Ask for another one.');
+        }
 
         return $this->redirect('/login');
     }

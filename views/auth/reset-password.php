@@ -5,6 +5,11 @@ $errors ??= [];
     <div class="col-md-6 col-lg-5">
         <h1 class="page-title">Choose a new password</h1>
 
+        <p class="text-body-secondary small">
+            We will email you a link to confirm it. Until you open that link your
+            old password is still the one that works.
+        </p>
+
         <form method="post" action="/reset-password/<?= $this->e($token) ?>" novalidate>
             <?= $this->csrfField() ?>
 

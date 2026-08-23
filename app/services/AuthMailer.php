@@ -26,6 +26,14 @@ class AuthMailer extends TemplateMailer
         ]);
     }
 
+    public function sendPasswordChange(string $email, string $username, string $token): bool
+    {
+        return $this->deliver($email, 'Confirm your new Camagru password', 'password-change', [
+            'username' => $username,
+            'url' => $this->url('/confirm-password/' . $token),
+        ]);
+    }
+
     // Sent to the address being moved to, never to the one already on file:
     // the point is to prove that the new mailbox exists and is reachable.
     public function sendEmailChange(string $email, string $username, string $token): bool

@@ -45,10 +45,12 @@ $app->router->post("/forgot-password", [AuthController::class, 'forgotPassword']
 $app->router->get("/reset-password/{token}", [AuthController::class, 'resetPassword']);
 $app->router->post("/reset-password/{token}", [AuthController::class, 'resetPassword']);
 
+$app->router->get("/confirm-password/{token}", [AuthController::class, 'confirmPassword']);
+
 $app->router->get("/profile", [ProfileController::class, 'index']);
 $app->router->post("/profile/username", [ProfileController::class, 'updateUsername']);
 $app->router->post("/profile/email", [ProfileController::class, 'updateEmail']);
-$app->router->post("/profile/password", [ProfileController::class, 'updatePassword']);
+$app->router->post("/profile/password", [ProfileController::class, 'sendPasswordLink']);
 $app->router->post("/profile/notifications", [ProfileController::class, 'updateNotifications']);
 $app->router->post("/profile/cancel-email-change", [ProfileController::class, 'cancelEmailChange']);
 

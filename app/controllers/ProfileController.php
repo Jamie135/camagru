@@ -19,6 +19,8 @@ class ProfileController extends Controller
 
     private const EMAIL_SENT = 'Check that inbox — we have sent it a link to confirm the change.';
 
+    private const PASSWORD_LINK_SENT = 'Check your inbox — we have sent you a link to set a new password.';
+
     private ?AuthMailer $mailer = null;
 
     public function index(): string
@@ -157,34 +159,21 @@ class ProfileController extends Controller
 
     // -----------------------------------------------------------------------
 
-    public function updatePassword(): string
+    // No password is typed here: the account is sent the same one-time link as
+    // a forgotten password, and /reset-password is the only place it changes.
+    public function sendPasswordLink(): string
     {
         if (($redirect = $this->requireAuth()) !== null) {
             return $redirect;
         }
 
-        $validator = new Validator($this->request->body());
-        $validator
-            ->required('current_password')
-            ->required('password')->password('password')->length('password', 8, 128)
-            ->required('confirm_password')->matches('confirm_password', 'password');
+        $user = $this->auth->user();
+        $token = User::newToken();
 
-        if ($validator->fails()) {
-            return $this->form('password', $validator->errors());
-        }
+        User::startPasswordReset((int) $user['id'], $token);
+        $this->mailer()->sendPasswordReset($user['email'], $user['username'], $token);
 
-        if (($failure = $this->checkCurrentPassword($validator)) !== null) {
-            return $this->form('password', $failure);
-        }
-
-        User::updatePassword((int) $this->auth->id(), $validator->value('password'));
-
-        // A new session id, in case the reason for changing it was that someone
-        // else had a copy of the old one.
-        $this->session->regenerate();
-        $this->csrf->rotate();
-
-        $this->session->flash('success', 'Your password has been changed.');
+        $this->session->flash('info', self::PASSWORD_LINK_SENT);
 
         return $this->redirect('/profile');
     }

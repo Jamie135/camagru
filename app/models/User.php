@@ -160,7 +160,8 @@ class User
 
     /**
      * Promotes the pending address, in one statement for the same reason
-     * resetPassword() does: expiry and single use are settled by the database.
+     * confirmPasswordChange() does: expiry and single use are settled by the
+     * database.
      *
      * Throws DuplicateUserException when somebody else has registered the
      * address in the meantime — an hour is long enough for that to happen.
@@ -216,16 +217,64 @@ class User
         );
     }
 
-    public static function resetPassword(string $token, string $password): bool
+    // ---------------------------------------------------------------------
+    // Password change
+    //
+    // The chosen password is parked in pending_password_hash and only becomes
+    // the real one once the link mailed to the account comes back, so until
+    // then the old password is still the one that opens the account.
+    // ---------------------------------------------------------------------
+
+    public static function startPasswordChange(string $resetToken, string $password, string $token): bool
     {
         $statement = self::execute(
-            'UPDATE users
-                SET password_hash = :hash, reset_token = NULL, reset_expires_at = NULL
-              WHERE reset_token = :token AND reset_expires_at > now()',
-            ['hash' => password_hash($password, self::ALGORITHM), 'token' => $token]
+            "UPDATE users
+                SET pending_password_hash = :hash,
+                    password_change_token = :change_token,
+                    password_change_expires_at = now() + interval '1 hour',
+                    reset_token = NULL,
+                    reset_expires_at = NULL
+              WHERE reset_token = :reset_token AND reset_expires_at > now()",
+            [
+                'hash' => password_hash($password, self::ALGORITHM),
+                'change_token' => $token,
+                'reset_token' => $resetToken,
+            ]
         );
 
         return $statement->rowCount() === 1;
+    }
+
+    public static function confirmPasswordChange(string $token): bool
+    {
+        $statement = self::execute(
+            'UPDATE users
+                SET password_hash = pending_password_hash,
+                    pending_password_hash = NULL,
+                    password_change_token = NULL,
+                    password_change_expires_at = NULL
+              WHERE password_change_token = :token
+                AND password_change_expires_at > now()
+                AND pending_password_hash IS NOT NULL',
+            ['token' => $token]
+        );
+
+        return $statement->rowCount() === 1;
+    }
+
+    // So a sign-in with a password that is waiting to be confirmed can say so
+    // instead of just calling it wrong.
+    public static function isPendingPassword(?array $user, string $password): bool
+    {
+        if ($user === null || $user['pending_password_hash'] === null) {
+            return false;
+        }
+
+        if (strtotime($user['password_change_expires_at']) <= time()) {
+            return false;
+        }
+
+        return password_verify($password, $user['pending_password_hash']);
     }
 
     public static function newToken(): string

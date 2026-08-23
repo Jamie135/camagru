@@ -20,6 +20,12 @@ CREATE TABLE users (
     email_change_token      VARCHAR(64),
     email_change_expires_at TIMESTAMPTZ,
 
+    -- Password change. Same idea: the new hash waits here until the link is
+    -- clicked, so the old password keeps working and the new one does not.
+    pending_password_hash      VARCHAR(255),
+    password_change_token      VARCHAR(64),
+    password_change_expires_at TIMESTAMPTZ,
+
     notify_on_comment BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
 
@@ -38,6 +44,8 @@ CREATE UNIQUE INDEX users_reset_token_idx ON users (reset_token)
     WHERE reset_token IS NOT NULL;
 CREATE UNIQUE INDEX users_email_change_token_idx ON users (email_change_token)
     WHERE email_change_token IS NOT NULL;
+CREATE UNIQUE INDEX users_password_change_token_idx ON users (password_change_token)
+    WHERE password_change_token IS NOT NULL;
 
 -- ---------------------------------------------------------------------------
 -- photos

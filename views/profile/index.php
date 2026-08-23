@@ -87,35 +87,16 @@ $in = fn (string $name): array => $section === $name ? $errors : [];
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="h5 card-title">Password</h2>
+                <p class="text-body-secondary small">
+                    We will email <?= $this->e($user['email']) ?> a link to set a new
+                    password, then a second one to confirm it. Your current password
+                    keeps working until you open that second link.
+                </p>
 
-                <form method="post" action="/profile/password" novalidate>
+                <form method="post" action="/profile/password">
                     <?= $this->csrfField() ?>
 
-                    <div class="mb-3">
-                        <label for="password_current" class="form-label">Current password</label>
-                        <input type="password" class="form-control" id="password_current"
-                               name="current_password" autocomplete="current-password" required>
-                        <?= $this->fieldError($in('password'), 'current_password') ?>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label">New password</label>
-                        <input type="password" class="form-control" id="password" name="password"
-                               autocomplete="new-password" required>
-                        <?= $this->fieldError($in('password'), 'password') ?>
-                        <div class="form-text">
-                            At least 8 characters, with an uppercase letter, a lowercase letter and a digit.
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm new password</label>
-                        <input type="password" class="form-control" id="confirm_password"
-                               name="confirm_password" autocomplete="new-password" required>
-                        <?= $this->fieldError($in('password'), 'confirm_password') ?>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Change password</button>
+                    <button type="submit" class="btn btn-primary">Email me a link</button>
                 </form>
             </div>
         </div>
