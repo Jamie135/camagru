@@ -29,7 +29,10 @@
             </div>
 
             <fieldset class="mb-4" data-max-overlays="<?= $maxOverlays ?>">
-                <legend class="h6">Choose an overlay</legend>
+                <legend class="h6">
+                    Choose an overlay
+                    <span class="fw-normal text-body-secondary">(required for the camera)</span>
+                </legend>
 
                 <div class="d-flex flex-nowrap gap-2" data-picker>
                     <?php foreach ($overlays as $overlay): ?>
@@ -83,14 +86,14 @@
                        accept="image/jpeg,image/png" required>
 
                 <div class="form-text">
-                    JPEG or PNG, up to 8&nbsp;MB.
+                    JPEG or PNG, up to 8&nbsp;MB. Overlays are optional here.
                     <button type="button" class="btn btn-link btn-sm p-0 align-baseline" hidden data-use-camera>
                         Go back to the camera
                     </button>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-outline-primary" data-upload>Upload</button>
+            <button type="submit" class="btn btn-outline-primary">Upload</button>
         </form>
     </div>
 

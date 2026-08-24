@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Builds the final image server-side: a picture cropped to 640x480 with an
- * overlay stamped over it. The webcam and the upload both end up here.
+ * Builds the final image server-side: a picture cropped to 640x480 with any
+ * overlays stamped over it. The webcam and the upload both end up here; an
+ * upload may come with no overlays at all.
  */
 
 namespace app\services;
@@ -37,8 +38,8 @@ class ImageEditor
             $overlays[] = $path;
         }
 
-        if ($overlays === [] || count($overlays) > Overlay::MAX) {
-            throw new UnusableImageException('Choose at least one overlay, and no more than ' . Overlay::MAX . '.');
+        if (count($overlays) > Overlay::MAX) {
+            throw new UnusableImageException('Choose no more than ' . Overlay::MAX . ' overlays.');
         }
 
         $source = $this->decode($bytes);

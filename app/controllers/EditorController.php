@@ -54,7 +54,9 @@ class EditorController extends Controller
 
         $overlays = Overlay::pick($this->request->post('overlay'));
 
-        if ($overlays === []) {
+        // An uploaded picture is already a picture; only the webcam needs an
+        // overlay to make one.
+        if ($overlays === [] && $this->fromCamera()) {
             return $this->fail('Choose an overlay before taking a picture.');
         }
 
@@ -146,11 +148,18 @@ class EditorController extends Controller
         return $caption;
     }
 
+    private function fromCamera(): bool
+    {
+        $capture = $this->request->post('capture');
+
+        return is_string($capture) && $capture !== '';
+    }
+
     private function bytes(): string
     {
         $capture = $this->request->post('capture');
 
-        if (!is_string($capture) || $capture === '') {
+        if (!$this->fromCamera()) {
             return $this->upload();
         }
 

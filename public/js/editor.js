@@ -8,7 +8,6 @@ const stackList = document.querySelector('[data-stack]');
 const stackSummary = document.querySelector('[data-stack-summary]');
 const addOverlay = document.querySelector('[data-add-overlay]');
 const clearOverlays = document.querySelector('[data-clear-overlays]');
-const upload = document.querySelector('[data-upload]');
 const caption = document.querySelector('[data-caption]');
 const captureCaption = document.querySelector('[data-capture-caption]');
 const shutter = document.querySelector('[data-shutter]');
@@ -89,8 +88,9 @@ const refresh = () => {
         ? 'That is as many as one picture can take.'
         : chosenLayers.length + (chosenLayers.length === 1 ? ' overlay' : ' overlays') + ' on the picture.';
 
+    // Only the shutter waits on an overlay: an uploaded picture is already a
+    // picture, so the upload button stays live and the file input is the gate.
     shutter.disabled = !cameraReady || chosenFile !== null || chosenLayers.length === 0;
-    upload.disabled = chosenLayers.length === 0;
 };
 
 // The video goes, but the stage stays: it is where an uploaded picture gets
@@ -354,7 +354,7 @@ fileInput.form.addEventListener('submit', async (event) => {
 
     const chosenLayers = layers();
 
-    if (chosenLayers.length === 0 || chosenFile === null) {
+    if (chosenFile === null) {
         return;
     }
 
