@@ -181,9 +181,11 @@ const publish = async (body) => {
         body,
     });
 
-    const data = await response.json();
+    // The reason travels in the body, so a refused picture reads the same
+    // whatever the status; a 500 that never got as far as JSON still lands here.
+    const data = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+    if (data.error !== undefined || !response.ok) {
         notify(data.error ?? 'Your picture could not be saved.');
 
         return false;

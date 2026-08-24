@@ -200,10 +200,13 @@ class EditorController extends Controller
         return file_get_contents($file['tmp_name']);
     }
 
+    // A picture we will not take is an answer, not a failure of the request:
+    // 200 with the reason in the body, so the browser has no 4xx to log. Only
+    // the form post, which has no reader of its own, redirects with a flash.
     private function fail(string $message): string
     {
         if ($this->request->wantsJson()) {
-            return $this->json(['error' => $message], 422);
+            return $this->json(['error' => $message]);
         }
 
         $this->session->flash('danger', $message);
