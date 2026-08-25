@@ -1,4 +1,22 @@
-<h1 class="page-title">Gallery</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-baseline gap-3">
+    <h1 class="page-title">Gallery</h1>
+
+    <?php // How the rest of the photos arrive. Hidden until gallery.js takes it
+          // over, since pagination is the only way through without scripting. ?>
+    <?php if ($photos !== [] && $pages > 1): ?>
+        <div class="mb-4" data-view hidden>
+            <div class="btn-group btn-group-sm" role="group" aria-label="How the gallery loads photos">
+                <input type="radio" class="btn-check" name="gallery-view" id="view-pages"
+                       value="pages" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="view-pages">Pages</label>
+
+                <input type="radio" class="btn-check" name="gallery-view" id="view-scroll"
+                       value="scroll" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="view-scroll">Infinite scroll</label>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php if ($photos === []): ?>
     <p class="text-body-secondary">Nothing here yet.</p>
@@ -12,8 +30,6 @@
         ]) ?>
     </div>
 
-    <?php // The whole of the pagination when scripting is off. gallery.js hides
-          // it and scrolls the pages in instead, and puts it back if that fails. ?>
     <?php if ($pages > 1): ?>
         <nav aria-label="Gallery pages" class="my-4" data-pagination>
             <ul class="pagination justify-content-center">

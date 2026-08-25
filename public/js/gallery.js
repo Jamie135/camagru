@@ -125,20 +125,42 @@ document.addEventListener('submit', (event) => {
     run(form, match[1]);
 });
 
-// The gallery with page loads: the next page of photos is fetched and
-// added to the end of the gallery when the "More" button is clicked or scrolled into view.
+// The gallery two ways, whichever was picked: a page at a time, or the next
+// page fetched and appended as the "More" button is clicked or scrolled to.
 
 const gallery = document.querySelector('[data-gallery]');
 const more = document.querySelector('[data-more]');
+const pagination = document.querySelector('[data-pagination]');
+const view = document.querySelector('[data-view]');
 
-if (gallery !== null && more !== null && Number(gallery.dataset.page) < Number(gallery.dataset.pages)) {
+if (gallery !== null && more !== null && pagination !== null && view !== null) {
     const button = more.querySelector('[data-more-button]');
     const status = more.querySelector('[data-more-status]');
-    const pagination = document.querySelector('[data-pagination]');
+    const key = 'camagru:gallery-view';
 
-    let page = Number(gallery.dataset.page);
+    const first = Number(gallery.dataset.page);
+    const pages = Number(gallery.dataset.pages);
+
+    let page = first;
     let loading = false;
-    let ended = false;
+    let ended = page >= pages;
+
+    // A browser refusing storage still gets the choice, just not the memory of it.
+    const remembered = () => {
+        try {
+            return window.localStorage.getItem(key);
+        } catch {
+            return null;
+        }
+    };
+
+    const remember = (mode) => {
+        try {
+            window.localStorage.setItem(key, mode);
+        } catch {
+            return;
+        }
+    };
 
     const nextPage = async (wanted) => {
         const response = await fetch('/?page=' + wanted, {
@@ -182,10 +204,7 @@ if (gallery !== null && more !== null && Number(gallery.dataset.page) < Number(g
         } catch (error) {
             notify(error.message);
             status.textContent = 'Those did not load. Try again.';
-
-            if (pagination !== null) {
-                pagination.hidden = false;
-            }
+            pagination.hidden = false;
         } finally {
             loading = false;
             button.disabled = false;
@@ -203,11 +222,45 @@ if (gallery !== null && more !== null && Number(gallery.dataset.page) < Number(g
         }
     }, { rootMargin: '400px' });
 
-    if (pagination !== null) {
-        pagination.hidden = true;
-    }
+    // Landing on a numbered page, scrolling can only carry on from there, so
+    // the pages stay up as the way back to the ones above.
+    const scroll = () => {
+        pagination.hidden = first === 1;
+        more.hidden = ended;
+        observer.observe(more);
+    };
 
-    more.hidden = false;
+    const paginate = () => {
+        observer.unobserve(more);
+        more.hidden = true;
+        pagination.hidden = false;
+    };
+
+    const choose = (mode) => {
+        view.querySelectorAll('[name="gallery-view"]').forEach((radio) => {
+            radio.checked = radio.value === mode;
+        });
+
+        (mode === 'pages' ? paginate : scroll)();
+    };
+
+    view.addEventListener('change', (event) => {
+        const mode = event.target.value;
+
+        // Scrolling runs from the top of the gallery, pages resume at the last
+        // one scrolling reached: either can mean a page other than this one.
+        const wanted = mode === 'scroll' ? 1 : page;
+
+        remember(mode);
+
+        if (wanted === first) {
+            choose(mode);
+        } else {
+            window.location.assign(wanted === 1 ? '/' : '/?page=' + wanted);
+        }
+    });
+
+    view.hidden = false;
     button.addEventListener('click', load);
-    observer.observe(more);
+    choose(remembered() === 'pages' ? 'pages' : 'scroll');
 }
